@@ -14,6 +14,11 @@ public class Lune {
 
         System.out.println(LINE + "     Hello! I'm Lune\n     What can I do for you?\n" + LINE);
 
+        // Fixed-size array is enough per the spec (no more than 100 tasks,
+        // no need to persist to disk at this stage).
+        String[] tasks = new String[100];
+        int taskCount = 0;
+
         // Scanner is enough here since input is just read line-by-line;
         // no need for buffered/streamed reading at this stage.
         Scanner scanner = new Scanner(System.in);
@@ -22,8 +27,17 @@ public class Lune {
             if (input.equals("bye")) {
                 System.out.println(LINE + "     Bye. Hope to see you again soon!\n" + LINE);
                 break;
+            } else if (input.equals("list")) {
+                StringBuilder listing = new StringBuilder();
+                for (int i = 0; i < taskCount; i++) {
+                    listing.append("     ").append(i + 1).append(". ").append(tasks[i]).append("\n");
+                }
+                System.out.println(LINE + listing + LINE);
+            } else {
+                tasks[taskCount] = input;
+                taskCount++;
+                System.out.println(LINE + "     added: " + input + "\n" + LINE);
             }
-            System.out.println(LINE + "     " + input + "\n" + LINE);
         }
     }
 }
