@@ -45,7 +45,7 @@ public class Lune {
                         + "       " + tasks[index] + "\n" + LINE);
             } else if (input.startsWith("todo ")) {
                 String description = input.substring("todo ".length());
-                tasks[taskCount] = new Task(description);
+                tasks[taskCount] = new Todo(description);
                 taskCount++;
                 printAdded(tasks[taskCount - 1], taskCount);
             } else if (input.startsWith("deadline ")) {
@@ -53,7 +53,7 @@ public class Lune {
                 int byIndex = rest.indexOf(" /by ");
                 String description = rest.substring(0, byIndex);
                 String by = rest.substring(byIndex + " /by ".length());
-                tasks[taskCount] = new Task(description, by);
+                tasks[taskCount] = new Deadline(description, by);
                 taskCount++;
                 printAdded(tasks[taskCount - 1], taskCount);
             } else if (input.startsWith("event ")) {
@@ -63,7 +63,7 @@ public class Lune {
                 String description = rest.substring(0, fromIndex);
                 String from = rest.substring(fromIndex + " /from ".length(), toIndex);
                 String to = rest.substring(toIndex + " /to ".length());
-                tasks[taskCount] = new Task(description, from, to);
+                tasks[taskCount] = new Event(description, from, to);
                 taskCount++;
                 printAdded(tasks[taskCount - 1], taskCount);
             }
