@@ -43,11 +43,36 @@ public class Lune {
                 tasks[index].markAsUndone();
                 System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
                         + "       " + tasks[index] + "\n" + LINE);
-            } else {
-                tasks[taskCount] = new Task(input);
+            } else if (input.startsWith("todo ")) {
+                String description = input.substring("todo ".length());
+                tasks[taskCount] = new Task(description);
                 taskCount++;
-                System.out.println(LINE + "     added: " + input + "\n" + LINE);
+                printAdded(tasks[taskCount - 1], taskCount);
+            } else if (input.startsWith("deadline ")) {
+                String rest = input.substring("deadline ".length());
+                int byIndex = rest.indexOf(" /by ");
+                String description = rest.substring(0, byIndex);
+                String by = rest.substring(byIndex + " /by ".length());
+                tasks[taskCount] = new Task(description, by);
+                taskCount++;
+                printAdded(tasks[taskCount - 1], taskCount);
+            } else if (input.startsWith("event ")) {
+                String rest = input.substring("event ".length());
+                int fromIndex = rest.indexOf(" /from ");
+                int toIndex = rest.indexOf(" /to ");
+                String description = rest.substring(0, fromIndex);
+                String from = rest.substring(fromIndex + " /from ".length(), toIndex);
+                String to = rest.substring(toIndex + " /to ".length());
+                tasks[taskCount] = new Task(description, from, to);
+                taskCount++;
+                printAdded(tasks[taskCount - 1], taskCount);
             }
         }
+    }
+
+    private static void printAdded(Task task, int taskCount) {
+        System.out.println(LINE + "     Got it. I've added this task:\n"
+                + "       " + task + "\n"
+                + "     Now you have " + taskCount + " tasks in the list.\n" + LINE);
     }
 }
