@@ -27,46 +27,127 @@ public class Lune {
             if (input.equals("bye")) {
                 System.out.println(LINE + "     Bye. Hope to see you again soon!\n" + LINE);
                 break;
-            } else if (input.equals("list")) {
-                StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
-                for (int i = 0; i < taskCount; i++) {
-                    listing.append("     ").append(i + 1).append(".").append(tasks[i]).append("\n");
-                }
-                System.out.println(LINE + listing + LINE);
-            } else if (input.startsWith("mark ")) {
-                int index = Integer.parseInt(input.substring("mark ".length()).trim()) - 1;
-                tasks[index].markAsDone();
-                System.out.println(LINE + "     Nice! I've marked this task as done:\n"
-                        + "       " + tasks[index] + "\n" + LINE);
-            } else if (input.startsWith("unmark ")) {
-                int index = Integer.parseInt(input.substring("unmark ".length()).trim()) - 1;
-                tasks[index].markAsUndone();
-                System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
-                        + "       " + tasks[index] + "\n" + LINE);
-            } else if (input.startsWith("todo ")) {
-                String description = input.substring("todo ".length());
-                tasks[taskCount] = new Todo(description);
-                taskCount++;
-                printAdded(tasks[taskCount - 1], taskCount);
-            } else if (input.startsWith("deadline ")) {
-                String rest = input.substring("deadline ".length());
-                int byIndex = rest.indexOf(" /by ");
-                String description = rest.substring(0, byIndex);
-                String by = rest.substring(byIndex + " /by ".length());
-                tasks[taskCount] = new Deadline(description, by);
-                taskCount++;
-                printAdded(tasks[taskCount - 1], taskCount);
-            } else if (input.startsWith("event ")) {
-                String rest = input.substring("event ".length());
-                int fromIndex = rest.indexOf(" /from ");
-                int toIndex = rest.indexOf(" /to ");
-                String description = rest.substring(0, fromIndex);
-                String from = rest.substring(fromIndex + " /from ".length(), toIndex);
-                String to = rest.substring(toIndex + " /to ".length());
-                tasks[taskCount] = new Event(description, from, to);
-                taskCount++;
-                printAdded(tasks[taskCount - 1], taskCount);
             }
+            try {
+                taskCount = processCommand(input, tasks, taskCount);
+            } catch (LuneException e) {
+                System.out.println(LINE + "     " + e.getMessage() + "\n" + LINE);
+            }
+        }
+    }
+
+    /**
+     * Executes one non-"bye" command and returns the (possibly updated)
+     * task count. Throws LuneException, with a message meant to be shown
+     * to the user as-is, for any command Lune can't carry out.
+     */
+    private static int processCommand(String input, Task[] tasks, int taskCount) throws LuneException {
+        if (input.equals("list")) {
+            StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
+            for (int i = 0; i < taskCount; i++) {
+                listing.append("     ").append(i + 1).append(".").append(tasks[i]).append("\n");
+            }
+            System.out.println(LINE + listing + LINE);
+            return taskCount;
+        } else if (input.equals("mark") || input.startsWith("mark ")) {
+            int index = parseTaskIndex(input, "mark", taskCount);
+            tasks[index].markAsDone();
+            System.out.println(LINE + "     Nice! I've marked this task as done:\n"
+                    + "       " + tasks[index] + "\n" + LINE);
+            return taskCount;
+        } else if (input.equals("unmark") || input.startsWith("unmark ")) {
+            int index = parseTaskIndex(input, "unmark", taskCount);
+            tasks[index].markAsUndone();
+            System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
+                    + "       " + tasks[index] + "\n" + LINE);
+            return taskCount;
+        } else if (input.equals("todo") || input.startsWith("todo ")) {
+            String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
+            if (description.isEmpty()) {
+                throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
+            }
+            requireRoom(tasks, taskCount);
+            tasks[taskCount] = new Todo(description);
+            taskCount++;
+            printAdded(tasks[taskCount - 1], taskCount);
+            return taskCount;
+        } else if (input.equals("deadline") || input.startsWith("deadline ")) {
+            String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
+            int byIndex = rest.indexOf(" /by ");
+            String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
+            if (description.isEmpty()) {
+                throw new LuneException("Uh-oh, a deadline needs a description — "
+                        + "try: deadline <what to do> /by <when>");
+            }
+            if (byIndex == -1) {
+                throw new LuneException("Uh-oh, a deadline needs a /by date or time — "
+                        + "try: deadline " + description + " /by <when>");
+            }
+            String by = rest.substring(byIndex + " /by ".length()).trim();
+            if (by.isEmpty()) {
+                throw new LuneException("Uh-oh, a deadline's /by date or time can't be empty.");
+            }
+            requireRoom(tasks, taskCount);
+            tasks[taskCount] = new Deadline(description, by);
+            taskCount++;
+            printAdded(tasks[taskCount - 1], taskCount);
+            return taskCount;
+        } else if (input.equals("event") || input.startsWith("event ")) {
+            String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
+            int fromIndex = rest.indexOf(" /from ");
+            int toIndex = rest.indexOf(" /to ");
+            String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
+            if (description.isEmpty()) {
+                throw new LuneException("Uh-oh, an event needs a description — "
+                        + "try: event <what to do> /from <start> /to <end>");
+            }
+            if (fromIndex == -1) {
+                throw new LuneException("Uh-oh, an event needs a /from date or time — "
+                        + "try: event " + description + " /from <start> /to <end>");
+            }
+            if (toIndex == -1 || toIndex < fromIndex) {
+                throw new LuneException("Uh-oh, an event needs a /to date or time after /from — "
+                        + "try: event " + description + " /from <start> /to <end>");
+            }
+            String from = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
+            String to = rest.substring(toIndex + " /to ".length()).trim();
+            if (from.isEmpty() || to.isEmpty()) {
+                throw new LuneException("Uh-oh, an event's /from and /to date or time can't be empty.");
+            }
+            requireRoom(tasks, taskCount);
+            tasks[taskCount] = new Event(description, from, to);
+            taskCount++;
+            printAdded(tasks[taskCount - 1], taskCount);
+            return taskCount;
+        } else {
+            throw new LuneException("Uh-oh, I don't recognize that command — "
+                    + "try todo, deadline, event, list, mark, unmark, or bye.");
+        }
+    }
+
+    private static int parseTaskIndex(String input, String commandWord, int taskCount) throws LuneException {
+        String arg = input.equals(commandWord) ? "" : input.substring(commandWord.length() + 1).trim();
+        if (arg.isEmpty()) {
+            throw new LuneException("Uh-oh, which task number should I " + commandWord
+                    + "? Try: " + commandWord + " 2");
+        }
+        int number;
+        try {
+            number = Integer.parseInt(arg);
+        } catch (NumberFormatException e) {
+            throw new LuneException("Uh-oh, \"" + arg + "\" doesn't look like a task number.");
+        }
+        if (number < 1 || number > taskCount) {
+            throw new LuneException("Uh-oh, task " + number + " doesn't exist — "
+                    + "you currently have " + taskCount + " task(s).");
+        }
+        return number - 1;
+    }
+
+    private static void requireRoom(Task[] tasks, int taskCount) throws LuneException {
+        if (taskCount >= tasks.length) {
+            throw new LuneException("Uh-oh, your task list is full (max " + tasks.length + ") "
+                    + "— I can't add anything else.");
         }
     }
 
