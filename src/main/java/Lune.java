@@ -5,6 +5,30 @@ public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
 
+    /**
+     * The commands processCommand() can dispatch on. Enum constant names
+     * double as the literal command word (lowercased via word()), so adding
+     * a command word to check for is a one-line change instead of a new
+     * string literal scattered across an if-else chain.
+     */
+    private enum CommandType {
+        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, UNKNOWN;
+
+        String word() {
+            return name().toLowerCase();
+        }
+
+        static CommandType fromInput(String input) {
+            String word = input.contains(" ") ? input.substring(0, input.indexOf(' ')) : input;
+            for (CommandType type : values()) {
+                if (type != UNKNOWN && type.word().equals(word)) {
+                    return type;
+                }
+            }
+            return UNKNOWN;
+        }
+    }
+
     public static void main(String[] args) {
         String banner = " _                     \n"
                 + "| |   _   _ _ __   ___ \n"
@@ -41,36 +65,46 @@ public class Lune {
      * carry out.
      */
     private static void processCommand(String input, ArrayList<Task> tasks) throws LuneException {
-        if (input.equals("list")) {
+        switch (CommandType.fromInput(input)) {
+        case LIST:
             StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
             for (int i = 0; i < tasks.size(); i++) {
                 listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
             }
             System.out.println(LINE + listing + LINE);
-        } else if (input.equals("mark") || input.startsWith("mark ")) {
-            int index = parseTaskIndex(input, "mark", tasks.size());
+            break;
+        case MARK: {
+            int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
             tasks.get(index).markAsDone();
             System.out.println(LINE + "     Nice! I've marked this task as done:\n"
                     + "       " + tasks.get(index) + "\n" + LINE);
-        } else if (input.equals("unmark") || input.startsWith("unmark ")) {
-            int index = parseTaskIndex(input, "unmark", tasks.size());
+            break;
+        }
+        case UNMARK: {
+            int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
             tasks.get(index).markAsUndone();
             System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
                     + "       " + tasks.get(index) + "\n" + LINE);
-        } else if (input.equals("delete") || input.startsWith("delete ")) {
-            int index = parseTaskIndex(input, "delete", tasks.size());
+            break;
+        }
+        case DELETE: {
+            int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
             Task removed = tasks.remove(index);
             System.out.println(LINE + "     Noted. I've removed this task:\n"
                     + "       " + removed + "\n"
                     + "     Now you have " + tasks.size() + " tasks in the list.\n" + LINE);
-        } else if (input.equals("todo") || input.startsWith("todo ")) {
+            break;
+        }
+        case TODO: {
             String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
             if (description.isEmpty()) {
                 throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
             }
             tasks.add(new Todo(description));
             printAdded(tasks.get(tasks.size() - 1), tasks.size());
-        } else if (input.equals("deadline") || input.startsWith("deadline ")) {
+            break;
+        }
+        case DEADLINE: {
             String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
             int byIndex = rest.indexOf(" /by ");
             String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
@@ -88,7 +122,9 @@ public class Lune {
             }
             tasks.add(new Deadline(description, by));
             printAdded(tasks.get(tasks.size() - 1), tasks.size());
-        } else if (input.equals("event") || input.startsWith("event ")) {
+            break;
+        }
+        case EVENT: {
             String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
             int fromIndex = rest.indexOf(" /from ");
             int toIndex = rest.indexOf(" /to ");
@@ -112,13 +148,17 @@ public class Lune {
             }
             tasks.add(new Event(description, from, to));
             printAdded(tasks.get(tasks.size() - 1), tasks.size());
-        } else {
+            break;
+        }
+        case UNKNOWN:
+        default:
             throw new LuneException("Uh-oh, I don't recognize that command — "
                     + "try todo, deadline, event, list, mark, unmark, delete, or bye.");
         }
     }
 
-    private static int parseTaskIndex(String input, String commandWord, int taskCount) throws LuneException {
+    private static int parseTaskIndex(String input, CommandType command, int taskCount) throws LuneException {
+        String commandWord = command.word();
         String arg = input.equals(commandWord) ? "" : input.substring(commandWord.length() + 1).trim();
         if (arg.isEmpty()) {
             throw new LuneException("Uh-oh, which task number should I " + commandWord
