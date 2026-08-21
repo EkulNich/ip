@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Lune {
@@ -14,10 +15,8 @@ public class Lune {
 
         System.out.println(LINE + "     Hello! I'm Lune\n     What can I do for you?\n" + LINE);
 
-        // Fixed-size array is enough per the spec (no more than 100 tasks,
-        // no need to persist to disk at this stage).
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        // ArrayList grows as needed, so there's no fixed task limit to enforce.
+        ArrayList<Task> tasks = new ArrayList<>();
 
         // Scanner is enough here since input is just read line-by-line;
         // no need for buffered/streamed reading at this stage.
@@ -29,7 +28,7 @@ public class Lune {
                 break;
             }
             try {
-                taskCount = processCommand(input, tasks, taskCount);
+                processCommand(input, tasks);
             } catch (LuneException e) {
                 System.out.println(LINE + "     " + e.getMessage() + "\n" + LINE);
             }
@@ -37,40 +36,40 @@ public class Lune {
     }
 
     /**
-     * Executes one non-"bye" command and returns the (possibly updated)
-     * task count. Throws LuneException, with a message meant to be shown
-     * to the user as-is, for any command Lune can't carry out.
+     * Executes one non-"bye" command. Throws LuneException, with a message
+     * meant to be shown to the user as-is, for any command Lune can't
+     * carry out.
      */
-    private static int processCommand(String input, Task[] tasks, int taskCount) throws LuneException {
+    private static void processCommand(String input, ArrayList<Task> tasks) throws LuneException {
         if (input.equals("list")) {
             StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
-            for (int i = 0; i < taskCount; i++) {
-                listing.append("     ").append(i + 1).append(".").append(tasks[i]).append("\n");
+            for (int i = 0; i < tasks.size(); i++) {
+                listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
             }
             System.out.println(LINE + listing + LINE);
-            return taskCount;
         } else if (input.equals("mark") || input.startsWith("mark ")) {
-            int index = parseTaskIndex(input, "mark", taskCount);
-            tasks[index].markAsDone();
+            int index = parseTaskIndex(input, "mark", tasks.size());
+            tasks.get(index).markAsDone();
             System.out.println(LINE + "     Nice! I've marked this task as done:\n"
-                    + "       " + tasks[index] + "\n" + LINE);
-            return taskCount;
+                    + "       " + tasks.get(index) + "\n" + LINE);
         } else if (input.equals("unmark") || input.startsWith("unmark ")) {
-            int index = parseTaskIndex(input, "unmark", taskCount);
-            tasks[index].markAsUndone();
+            int index = parseTaskIndex(input, "unmark", tasks.size());
+            tasks.get(index).markAsUndone();
             System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
-                    + "       " + tasks[index] + "\n" + LINE);
-            return taskCount;
+                    + "       " + tasks.get(index) + "\n" + LINE);
+        } else if (input.equals("delete") || input.startsWith("delete ")) {
+            int index = parseTaskIndex(input, "delete", tasks.size());
+            Task removed = tasks.remove(index);
+            System.out.println(LINE + "     Noted. I've removed this task:\n"
+                    + "       " + removed + "\n"
+                    + "     Now you have " + tasks.size() + " tasks in the list.\n" + LINE);
         } else if (input.equals("todo") || input.startsWith("todo ")) {
             String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
             if (description.isEmpty()) {
                 throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
             }
-            requireRoom(tasks, taskCount);
-            tasks[taskCount] = new Todo(description);
-            taskCount++;
-            printAdded(tasks[taskCount - 1], taskCount);
-            return taskCount;
+            tasks.add(new Todo(description));
+            printAdded(tasks.get(tasks.size() - 1), tasks.size());
         } else if (input.equals("deadline") || input.startsWith("deadline ")) {
             String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
             int byIndex = rest.indexOf(" /by ");
@@ -87,11 +86,8 @@ public class Lune {
             if (by.isEmpty()) {
                 throw new LuneException("Uh-oh, a deadline's /by date or time can't be empty.");
             }
-            requireRoom(tasks, taskCount);
-            tasks[taskCount] = new Deadline(description, by);
-            taskCount++;
-            printAdded(tasks[taskCount - 1], taskCount);
-            return taskCount;
+            tasks.add(new Deadline(description, by));
+            printAdded(tasks.get(tasks.size() - 1), tasks.size());
         } else if (input.equals("event") || input.startsWith("event ")) {
             String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
             int fromIndex = rest.indexOf(" /from ");
@@ -114,14 +110,11 @@ public class Lune {
             if (from.isEmpty() || to.isEmpty()) {
                 throw new LuneException("Uh-oh, an event's /from and /to date or time can't be empty.");
             }
-            requireRoom(tasks, taskCount);
-            tasks[taskCount] = new Event(description, from, to);
-            taskCount++;
-            printAdded(tasks[taskCount - 1], taskCount);
-            return taskCount;
+            tasks.add(new Event(description, from, to));
+            printAdded(tasks.get(tasks.size() - 1), tasks.size());
         } else {
             throw new LuneException("Uh-oh, I don't recognize that command — "
-                    + "try todo, deadline, event, list, mark, unmark, or bye.");
+                    + "try todo, deadline, event, list, mark, unmark, delete, or bye.");
         }
     }
 
@@ -142,13 +135,6 @@ public class Lune {
                     + "you currently have " + taskCount + " task(s).");
         }
         return number - 1;
-    }
-
-    private static void requireRoom(Task[] tasks, int taskCount) throws LuneException {
-        if (taskCount >= tasks.length) {
-            throw new LuneException("Uh-oh, your task list is full (max " + tasks.length + ") "
-                    + "— I can't add anything else.");
-        }
     }
 
     private static void printAdded(Task task, int taskCount) {
