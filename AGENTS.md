@@ -34,6 +34,10 @@ Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
 
+## Java coding standard
+
+All Java code in this project (new or edited, main or test) must follow the SE-EDU intermediate Java coding standard — use the `seedu-java-coding-standard` skill for the full rules (naming, layout, import order, brace/whitespace style, Javadoc conventions). Apply it by default while writing or editing any `.java` file, not only when explicitly asked about style, and fix violations you notice in code you're already touching for another reason.
+
 ## Testing
 
 Test coverage target: JUnit tests should cover the top ~50% highest-value methods in the codebase — prioritize complex, core, or critical business logic (e.g. parsing/validation logic, date handling, matching/range logic) over trivial getters/setters, one-line delegates, or println-driven orchestration methods that are better covered by console-level testing.
