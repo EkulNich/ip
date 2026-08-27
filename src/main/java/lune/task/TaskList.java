@@ -12,30 +12,52 @@ import java.util.Iterator;
 public class TaskList implements Iterable<Task> {
     private final ArrayList<Task> tasks;
 
+    /**
+     * Creates a new, empty task list.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
+    /**
+     * Creates a task list wrapping the given tasks (e.g. ones just loaded
+     * from disk).
+     */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
+    /**
+     * Adds a task to the end of the list.
+     */
     public void add(Task task) {
         tasks.add(task);
     }
 
+    /**
+     * Removes and returns the task at the given (0-based) index.
+     */
     public Task remove(int index) {
         return tasks.remove(index);
     }
 
+    /**
+     * Returns the task at the given (0-based) index.
+     */
     public Task get(int index) {
         return tasks.get(index);
     }
 
+    /**
+     * Returns how many tasks are in the list.
+     */
     public int size() {
         return tasks.size();
     }
 
+    /**
+     * Returns an iterator over the tasks, in list order.
+     */
     @Override
     public Iterator<Task> iterator() {
         return tasks.iterator();

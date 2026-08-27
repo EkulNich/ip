@@ -20,27 +20,47 @@ public class Task {
     protected String description;
     protected boolean isDone;
 
+    /**
+     * Creates a new, not-done task with the given description.
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Returns this task's description.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns the single-character icon shown for this task's done status:
+     * "X" if done, a space otherwise.
+     */
     public String getStatusIcon() {
         return (isDone ? "X" : " "); // mark done task with X
     }
 
+    /**
+     * Marks this task as done.
+     */
     public void markAsDone() {
         isDone = true;
     }
 
+    /**
+     * Marks this task as not done.
+     */
     public void markAsUndone() {
         isDone = false;
     }
 
+    /**
+     * Renders this task for display, e.g. "[X] read book". Subclasses
+     * prepend their type tag and append their own date/time fields.
+     */
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
