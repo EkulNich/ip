@@ -1,12 +1,5 @@
 package lune;
 
-import lune.exception.LuneException;
-import lune.task.Deadline;
-import lune.task.Event;
-import lune.task.Task;
-import lune.task.TaskList;
-import lune.task.Todo;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +10,13 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import lune.exception.LuneException;
+import lune.task.Deadline;
+import lune.task.Event;
+import lune.task.Task;
+import lune.task.TaskList;
+import lune.task.Todo;
 
 /**
  * Entry point and console loop for Lune, a CLI task-tracking chatbot.
@@ -213,6 +213,7 @@ public class Lune {
             break;
         }
         case UNKNOWN:
+            // Fallthrough
         default:
             throw new LuneException("Uh-oh, I don't recognize that command — "
                     + "try todo, deadline, event, list, mark, unmark, delete, on, or bye.");

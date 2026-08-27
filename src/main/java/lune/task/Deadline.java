@@ -37,7 +37,8 @@ public class Deadline extends Task {
     }
 
     /**
-     * Whether this deadline's due date matches the given date exactly.
+     * Returns whether this deadline's due date matches the given date
+     * exactly.
      */
     @Override
     public boolean occursOn(LocalDate date) {
