@@ -28,8 +28,11 @@ public class Lune {
      * double as the literal command word (lowercased via word()), so adding
      * a command word to check for is a one-line change instead of a new
      * string literal scattered across an if-else chain.
+     *
+     * Package-private (not private) so LuneTest can construct commands and
+     * exercise fromInput() directly.
      */
-    private enum CommandType {
+    enum CommandType {
         LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, UNKNOWN;
 
         String word() {
@@ -198,7 +201,7 @@ public class Lune {
         }
     }
 
-    private static int parseTaskIndex(String input, CommandType command, int taskCount) throws LuneException {
+    static int parseTaskIndex(String input, CommandType command, int taskCount) throws LuneException {
         String commandWord = command.word();
         String arg = input.equals(commandWord) ? "" : input.substring(commandWord.length() + 1).trim();
         if (arg.isEmpty()) {
@@ -222,7 +225,7 @@ public class Lune {
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
 
-    private static LocalDateTime parseDateTime(String label, String text) throws LuneException {
+    static LocalDateTime parseDateTime(String label, String text) throws LuneException {
         try {
             return LocalDate.parse(text).atStartOfDay();
         } catch (DateTimeParseException isoFailure) {
@@ -301,7 +304,7 @@ public class Lune {
         return tasks;
     }
 
-    private static Task parseSavedTask(String line) {
+    static Task parseSavedTask(String line) {
         String[] parts = line.split(" \\| ", -1);
         if (parts.length < 3) {
             throw new IllegalArgumentException("expected at least 3 fields (type | done | description), found "
@@ -348,7 +351,7 @@ public class Lune {
         return task;
     }
 
-    private static LocalDateTime parseSavedDateTime(String text) {
+    static LocalDateTime parseSavedDateTime(String text) {
         try {
             return LocalDateTime.parse(text);
         } catch (DateTimeParseException e) {
