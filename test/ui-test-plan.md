@@ -1656,7 +1656,7 @@ bye
 
 ## Test Case 17: A corrupted save file doesn't crash startup
 
-**Aim:** Verify a save file that doesn't match the expected format is handled gracefully — the program reports a load problem instead of crashing, and continues with an empty task list rather than a half-populated or inconsistent one.
+**Aim:** Verify a save file that doesn't match the expected format is handled gracefully — the program reports the specific unreadable line instead of crashing, and continues (here, with an empty list since the only line present is bad).
 
 **Given file:**
 ```given-file:data/lune.txt
@@ -1683,11 +1683,113 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, I couldn't load your saved tasks (Index 1 out of bounds for length 1) — starting with an empty list.
+     Uh-oh, skipping unreadable line 1 in data/lune.txt: expected at least 3 fields (type | done | description), found 1
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 18: Individually corrupted save-file lines are skipped, not the whole file
+
+**Aim:** Verify that when a save file has a mix of valid and invalid lines, only the invalid ones are skipped (each reported with a specific reason and line number), while every valid line still loads correctly — a single bad line must not wipe out the rest of a person's saved tasks.
+
+**Given file:**
+```given-file:data/lune.txt
+T | 1 | read book
+this is garbage
+D | 0 | return book | June 6th
+X | 0 | unknown type
+E | 0 | project meeting | Aug 6th
+T | 2 | bad done flag
+
+T | 1 | join sports club
+```
+
+**Input:**
+```input
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, skipping unreadable line 2 in data/lune.txt: expected at least 3 fields (type | done | description), found 1
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, skipping unreadable line 4 in data/lune.txt: unknown task type "X"
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, skipping unreadable line 5 in data/lune.txt: an event (E) line needs exactly 5 fields with non-empty /from and /to, found 4
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, skipping unreadable line 6 in data/lune.txt: done flag must be "0" or "1", found "2"
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: June 6th)
+     3.[T][X] join sports club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 19: Input ending without "bye" exits gracefully instead of crashing
+
+**Aim:** Verify that stdin running out without an explicit `bye` (e.g. a piped file with no trailing `bye`, or Ctrl+D) exits cleanly with the normal farewell message, rather than crashing with an uncaught `NoSuchElementException` from `Scanner.nextLine()`.
+
+**Input:**
+```input
+todo read book
+list
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
