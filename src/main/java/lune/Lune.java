@@ -1,3 +1,12 @@
+package lune;
+
+import lune.exception.LuneException;
+import lune.task.Deadline;
+import lune.task.Event;
+import lune.task.Task;
+import lune.task.TaskList;
+import lune.task.Todo;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -173,7 +182,7 @@ public class Lune {
             }
             LocalDate queryDate = parseDateTime("on", text).toLocalDate();
             StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
-                    + queryDate.format(Task.DISPLAY_DATE_FORMAT) + ":\n");
+                    + Task.formatDate(queryDate) + ":\n");
             for (int i = 0; i < tasks.size(); i++) {
                 if (tasks.get(i).occursOn(queryDate)) {
                     onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");

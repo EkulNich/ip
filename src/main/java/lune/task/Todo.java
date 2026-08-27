@@ -1,3 +1,5 @@
+package lune.task;
+
 /**
  * A task without any date/time attached to it.
  */

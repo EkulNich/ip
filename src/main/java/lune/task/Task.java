@@ -1,3 +1,5 @@
+package lune.task;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,9 +12,9 @@ import java.time.format.DateTimeFormatter;
  */
 public class Task {
     /** Display format for a bare date, e.g. "Oct 15 2019". */
-    protected static final DateTimeFormatter DISPLAY_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy");
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy");
     /** Display format for a date with a time attached, e.g. "Oct 15 2019, 6:00 PM". */
-    protected static final DateTimeFormatter DISPLAY_DATE_TIME_FORMAT =
+    private static final DateTimeFormatter DISPLAY_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy, h:mm a");
 
     protected String description;
@@ -75,5 +77,15 @@ public class Task {
             return dateTime.format(DISPLAY_DATE_FORMAT);
         }
         return dateTime.format(DISPLAY_DATE_TIME_FORMAT);
+    }
+
+    /**
+     * Formats a bare date the same way task dates are displayed, e.g.
+     * "Oct 15 2019". Used outside this package (e.g. by the "on <date>"
+     * command) to render the queried date consistently with how tasks
+     * render their own dates, without exposing the formatter itself.
+     */
+    public static String formatDate(LocalDate date) {
+        return date.format(DISPLAY_DATE_FORMAT);
     }
 }

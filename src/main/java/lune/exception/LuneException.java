@@ -1,3 +1,5 @@
+package lune.exception;
+
 /**
  * Signals a problem with a user's command (e.g. missing/malformed details,
  * or a command Lune doesn't recognize). The message is written to be shown
