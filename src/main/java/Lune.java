@@ -1,9 +1,13 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
+    private static final Path SAVE_FILE = Path.of("data", "lune.txt");
 
     /**
      * The commands processCommand() can dispatch on. Enum constant names
@@ -40,7 +44,7 @@ public class Lune {
         System.out.println(LINE + "     Hello! I'm Lune\n     What can I do for you?\n" + LINE);
 
         // ArrayList grows as needed, so there's no fixed task limit to enforce.
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = loadTasks();
 
         // Scanner is enough here since input is just read line-by-line;
         // no need for buffered/streamed reading at this stage.
@@ -53,6 +57,7 @@ public class Lune {
             }
             try {
                 processCommand(input, tasks);
+                saveTasks(tasks);
             } catch (LuneException e) {
                 System.out.println(LINE + "     " + e.getMessage() + "\n" + LINE);
             }
@@ -181,5 +186,74 @@ public class Lune {
         System.out.println(LINE + "     Got it. I've added this task:\n"
                 + "       " + task + "\n"
                 + "     Now you have " + taskCount + " tasks in the list.\n" + LINE);
+    }
+
+    /**
+     * Writes every task to SAVE_FILE, one per line, overwriting whatever was
+     * there before. Called after every successful command so the file on
+     * disk always reflects the current in-memory list.
+     */
+    private static void saveTasks(ArrayList<Task> tasks) {
+        StringBuilder content = new StringBuilder();
+        for (Task task : tasks) {
+            content.append(task.toSaveFormat()).append("\n");
+        }
+        try {
+            Files.createDirectories(SAVE_FILE.getParent());
+            Files.writeString(SAVE_FILE, content.toString());
+        } catch (IOException e) {
+            System.out.println(LINE + "     Uh-oh, I couldn't save your tasks to disk: "
+                    + e.getMessage() + "\n" + LINE);
+        }
+    }
+
+    /**
+     * Reads SAVE_FILE (in the format written by saveTasks()) and rebuilds
+     * the task list from it. Returns an empty list if the file doesn't
+     * exist yet (e.g. first run) or can't be parsed — the save file is
+     * only ever written by this program, so this is the happy path; it
+     * doesn't try to recover individual malformed lines.
+     */
+    private static ArrayList<Task> loadTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        if (!Files.exists(SAVE_FILE)) {
+            return tasks;
+        }
+        try {
+            for (String line : Files.readAllLines(SAVE_FILE)) {
+                if (!line.isBlank()) {
+                    tasks.add(parseSavedTask(line));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(LINE + "     Uh-oh, I couldn't load your saved tasks ("
+                    + e.getMessage() + ") — starting with an empty list.\n" + LINE);
+            tasks.clear();
+        }
+        return tasks;
+    }
+
+    private static Task parseSavedTask(String line) {
+        String[] parts = line.split(" \\| ");
+        boolean isDone = parts[1].equals("1");
+        String description = parts[2];
+        Task task;
+        switch (parts[0]) {
+        case "T":
+            task = new Todo(description);
+            break;
+        case "D":
+            task = new Deadline(description, parts[3]);
+            break;
+        case "E":
+            task = new Event(description, parts[3], parts[4]);
+            break;
+        default:
+            throw new IllegalArgumentException("unknown saved task type \"" + parts[0] + "\"");
+        }
+        if (isDone) {
+            task.markAsDone();
+        }
+        return task;
     }
 }

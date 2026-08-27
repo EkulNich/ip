@@ -1513,3 +1513,184 @@ bye
      Bye. Hope to see you again soon!
     ____________________________________________________________
 ```
+
+## Test Case 15: Tasks are saved to disk after every change
+
+**Aim:** Verify that adding, marking, and deleting tasks each write the current task list to `data/lune.txt` in the pipe-separated save format, and that a deleted task is actually removed from the file (not just left as a stale line).
+
+**Input:**
+```input
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th /to 2-4pm
+todo join sports club
+mark 1
+mark 4
+delete 2
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: June 6th)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] project meeting (from: Aug 6th to: 2-4pm)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] join sports club
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] join sports club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noted. I've removed this task:
+       [D][ ] return book (by: June 6th)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+**Expected file (`data/lune.txt`):**
+```file:data/lune.txt
+T | 1 | read book
+E | 0 | project meeting | Aug 6th | 2-4pm
+T | 1 | join sports club
+```
+
+## Test Case 16: Tasks are loaded from an existing save file on startup
+
+**Aim:** Verify that on startup, an existing `data/lune.txt` (in the format `saveTasks()` writes) is correctly parsed back into todos/deadlines/events with the right done status, and that subsequent commands operate correctly on the loaded tasks.
+
+**Given file:**
+```given-file:data/lune.txt
+T | 1 | read book
+D | 0 | return book | June 6th
+E | 0 | project meeting | Aug 6th | 2-4pm
+T | 1 | join sports club
+```
+
+**Input:**
+```input
+list
+unmark 1
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: June 6th)
+     3.[E][ ] project meeting (from: Aug 6th to: 2-4pm)
+     4.[T][X] join sports club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've marked this task as not done yet:
+       [T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
+     2.[D][ ] return book (by: June 6th)
+     3.[E][ ] project meeting (from: Aug 6th to: 2-4pm)
+     4.[T][X] join sports club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 17: A corrupted save file doesn't crash startup
+
+**Aim:** Verify a save file that doesn't match the expected format is handled gracefully — the program reports a load problem instead of crashing, and continues with an empty task list rather than a half-populated or inconsistent one.
+
+**Given file:**
+```given-file:data/lune.txt
+this is not a valid line at all
+```
+
+**Input:**
+```input
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, I couldn't load your saved tasks (Index 1 out of bounds for length 1) — starting with an empty list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
