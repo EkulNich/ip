@@ -1,6 +1,10 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +21,7 @@ public class Lune {
      * string literal scattered across an if-else chain.
      */
     private enum CommandType {
-        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, UNKNOWN;
+        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, UNKNOWN;
 
         String word() {
             return name().toLowerCase();
@@ -119,16 +123,17 @@ public class Lune {
             String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
             if (description.isEmpty()) {
                 throw new LuneException("Uh-oh, a deadline needs a description — "
-                        + "try: deadline <what to do> /by <when>");
+                        + "try: deadline <what to do> /by <date>");
             }
             if (byIndex == -1) {
-                throw new LuneException("Uh-oh, a deadline needs a /by date or time — "
-                        + "try: deadline " + description + " /by <when>");
+                throw new LuneException("Uh-oh, a deadline needs a /by date — "
+                        + "try: deadline " + description + " /by <date>");
             }
-            String by = rest.substring(byIndex + " /by ".length()).trim();
-            if (by.isEmpty()) {
-                throw new LuneException("Uh-oh, a deadline's /by date or time can't be empty.");
+            String byText = rest.substring(byIndex + " /by ".length()).trim();
+            if (byText.isEmpty()) {
+                throw new LuneException("Uh-oh, a deadline's /by date can't be empty.");
             }
+            LocalDateTime by = parseDateTime("/by", byText);
             tasks.add(new Deadline(description, by));
             printAdded(tasks.get(tasks.size() - 1), tasks.size());
             break;
@@ -140,29 +145,47 @@ public class Lune {
             String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
             if (description.isEmpty()) {
                 throw new LuneException("Uh-oh, an event needs a description — "
-                        + "try: event <what to do> /from <start> /to <end>");
+                        + "try: event <what to do> /from <date> /to <date>");
             }
             if (fromIndex == -1) {
-                throw new LuneException("Uh-oh, an event needs a /from date or time — "
-                        + "try: event " + description + " /from <start> /to <end>");
+                throw new LuneException("Uh-oh, an event needs a /from date — "
+                        + "try: event " + description + " /from <date> /to <date>");
             }
             if (toIndex == -1 || toIndex < fromIndex) {
-                throw new LuneException("Uh-oh, an event needs a /to date or time after /from — "
-                        + "try: event " + description + " /from <start> /to <end>");
+                throw new LuneException("Uh-oh, an event needs a /to date after /from — "
+                        + "try: event " + description + " /from <date> /to <date>");
             }
-            String from = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
-            String to = rest.substring(toIndex + " /to ".length()).trim();
-            if (from.isEmpty() || to.isEmpty()) {
-                throw new LuneException("Uh-oh, an event's /from and /to date or time can't be empty.");
+            String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
+            String toText = rest.substring(toIndex + " /to ".length()).trim();
+            if (fromText.isEmpty() || toText.isEmpty()) {
+                throw new LuneException("Uh-oh, an event's /from and /to dates can't be empty.");
             }
+            LocalDateTime from = parseDateTime("/from", fromText);
+            LocalDateTime to = parseDateTime("/to", toText);
             tasks.add(new Event(description, from, to));
             printAdded(tasks.get(tasks.size() - 1), tasks.size());
+            break;
+        }
+        case ON: {
+            String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
+            if (text.isEmpty()) {
+                throw new LuneException("Uh-oh, tell me which date — try: on <date>");
+            }
+            LocalDate queryDate = parseDateTime("on", text).toLocalDate();
+            StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
+                    + queryDate.format(Task.DISPLAY_DATE_FORMAT) + ":\n");
+            for (int i = 0; i < tasks.size(); i++) {
+                if (tasks.get(i).occursOn(queryDate)) {
+                    onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+                }
+            }
+            System.out.println(LINE + onListing + LINE);
             break;
         }
         case UNKNOWN:
         default:
             throw new LuneException("Uh-oh, I don't recognize that command — "
-                    + "try todo, deadline, event, list, mark, unmark, delete, or bye.");
+                    + "try todo, deadline, event, list, mark, unmark, delete, on, or bye.");
         }
     }
 
@@ -184,6 +207,23 @@ public class Lune {
                     + "you currently have " + taskCount + " task(s).");
         }
         return number - 1;
+    }
+
+    // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
+    // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
+    private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+
+    private static LocalDateTime parseDateTime(String label, String text) throws LuneException {
+        try {
+            return LocalDate.parse(text).atStartOfDay();
+        } catch (DateTimeParseException isoFailure) {
+            try {
+                return LocalDateTime.parse(text, SLASH_DATE_TIME_FORMAT);
+            } catch (DateTimeParseException slashFailure) {
+                throw new LuneException("Uh-oh, \"" + text + "\" isn't a valid " + label
+                        + " date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).");
+            }
+        }
     }
 
     private static void printAdded(Task task, int taskCount) {
@@ -280,7 +320,7 @@ public class Lune {
                 throw new IllegalArgumentException(
                         "a deadline (D) line needs exactly 4 fields with a non-empty /by, found " + parts.length);
             }
-            task = new Deadline(description, parts[3]);
+            task = new Deadline(description, parseSavedDateTime(parts[3]));
             break;
         case "E":
             if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
@@ -288,7 +328,7 @@ public class Lune {
                         "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
                                 + parts.length);
             }
-            task = new Event(description, parts[3], parts[4]);
+            task = new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
             break;
         default:
             throw new IllegalArgumentException("unknown task type \"" + type + "\"");
@@ -297,5 +337,13 @@ public class Lune {
             task.markAsDone();
         }
         return task;
+    }
+
+    private static LocalDateTime parseSavedDateTime(String text) {
+        try {
+            return LocalDateTime.parse(text);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("\"" + text + "\" isn't a valid saved date/time");
+        }
     }
 }
