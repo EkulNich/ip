@@ -48,8 +48,8 @@ public class Lune {
 
         System.out.println(LINE + "     Hello! I'm Lune\n     What can I do for you?\n" + LINE);
 
-        // ArrayList grows as needed, so there's no fixed task limit to enforce.
-        ArrayList<Task> tasks = loadTasks();
+        // TaskList grows as needed, so there's no fixed task limit to enforce.
+        TaskList tasks = new TaskList(loadTasks());
 
         // Scanner is enough here since input is just read line-by-line;
         // no need for buffered/streamed reading at this stage.
@@ -77,7 +77,7 @@ public class Lune {
      * meant to be shown to the user as-is, for any command Lune can't
      * carry out.
      */
-    private static void processCommand(String input, ArrayList<Task> tasks) throws LuneException {
+    private static void processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
         case LIST:
             StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
@@ -237,7 +237,7 @@ public class Lune {
      * there before. Called after every successful command so the file on
      * disk always reflects the current in-memory list.
      */
-    private static void saveTasks(ArrayList<Task> tasks) {
+    private static void saveTasks(TaskList tasks) {
         StringBuilder content = new StringBuilder();
         for (Task task : tasks) {
             content.append(task.toSaveFormat()).append("\n");
