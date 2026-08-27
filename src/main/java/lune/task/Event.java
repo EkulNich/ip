@@ -40,8 +40,9 @@ public class Event extends Task {
     }
 
     /**
-     * Whether the given date falls within this event's from/to range,
-     * inclusive on both ends (comparing dates only, ignoring time-of-day).
+     * Returns whether the given date falls within this event's from/to
+     * range, inclusive on both ends (comparing dates only, ignoring
+     * time-of-day).
      */
     @Override
     public boolean occursOn(LocalDate date) {

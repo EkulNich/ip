@@ -76,9 +76,9 @@ public class Task {
     }
 
     /**
-     * Whether this task is associated with the given date. Todos never
-     * are; Deadline/Event override this with their own date(s). Used by
-     * the "on <date>" command.
+     * Returns whether this task is associated with the given date. Todos
+     * never are; Deadline/Event override this with their own date(s). Used
+     * by the "on <date>" command.
      */
     public boolean occursOn(LocalDate date) {
         return false;

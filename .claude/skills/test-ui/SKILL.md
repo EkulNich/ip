@@ -14,10 +14,10 @@ Run the test cases described in [`test/ui-test-plan.md`](../../../test/ui-test-p
 
    ```bash
    python3 .claude/skills/test-ui/scripts/run_ui_tests.py \
-     --source-dir src/main/java --main-class Lune
+     --source-dir src/main/java --main-class lune.Lune
    ```
 
-   The script compiles every `.java` file in `--source-dir` into a temporary build directory, then runs each test case as its own `java` process (with a fresh temporary directory as its working directory, so file writes never touch the real project), piping that case's input lines to stdin.
+   The script compiles every `.java` file under `--source-dir` (recursively, since source lives under package subdirectories like `lune/`, `lune/task/`) into a temporary build directory, then runs each test case as its own `java` process (with a fresh temporary directory as its working directory, so file writes never touch the real project), piping that case's input lines to stdin.
 
 3. The script prints, for every test case, the console input, the console output produced, and a PASS/FAIL result — this is the test session record.
 4. On the first failing test case, the script stops immediately (does not run later cases), prints that case's expected vs. actual output, and exits non-zero. Report that diff to the user rather than trying to explain it away.
@@ -60,4 +60,4 @@ Expected output/file content must match **exactly** (trailing newline difference
 
 ## Adding or updating test cases
 
-When asked to add a test case, append a new `## Test Case N: <name>` section following the format above. Generate the `expected` block (and any `file:` blocks) from a real run of the program — e.g. `mkdir -p /tmp/scratch && cd /tmp/scratch && printf '<input>\n' | java -cp <build-dir> Lune`, then `cat /tmp/scratch/data/lune.txt` for the file content — rather than guessing the output, then paste that exact text in. A hand-typed expected block is the most common source of false failures. Run from a scratch directory (not the real project root) so you don't overwrite the real `data/lune.txt` while generating a case. For a case that needs a `given-file:`, write that seed file into the scratch directory yourself before running the program, so the captured output/file reflects the real loading behavior rather than a guess.
+When asked to add a test case, append a new `## Test Case N: <name>` section following the format above. Generate the `expected` block (and any `file:` blocks) from a real run of the program — e.g. `mkdir -p /tmp/scratch && cd /tmp/scratch && printf '<input>\n' | java -cp <build-dir> lune.Lune`, then `cat /tmp/scratch/data/lune.txt` for the file content — rather than guessing the output, then paste that exact text in. A hand-typed expected block is the most common source of false failures. Run from a scratch directory (not the real project root) so you don't overwrite the real `data/lune.txt` while generating a case. For a case that needs a `given-file:`, write that seed file into the scratch directory yourself before running the program, so the captured output/file reflects the real loading behavior rather than a guess.
