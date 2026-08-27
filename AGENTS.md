@@ -33,3 +33,11 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+## Testing
+
+Test coverage target: JUnit tests should cover the top ~50% highest-value methods in the codebase — prioritize complex, core, or critical business logic (e.g. parsing/validation logic, date handling, matching/range logic) over trivial getters/setters, one-line delegates, or println-driven orchestration methods that are better covered by console-level testing.
+
+After any code change (new method, changed logic, changed method signature), update JUnit tests as needed to keep the codebase compliant with that 50% target: add tests for newly-introduced high-value logic, and fix/update existing tests whose expected behavior changed. Don't let test coverage silently drift below target as the codebase grows.
+
+Tests live under `src/test/java`, mirroring the package structure of `src/main/java` (Gradle/JUnit convention), e.g. `lune.task.Event` → `src/test/java/lune/task/EventTest.java`. Run via `./gradlew test`. This is separate from the `test-ui` skill, which tests the program end-to-end through its console I/O — use JUnit for unit-level logic, `test-ui` for full command/session behavior.
