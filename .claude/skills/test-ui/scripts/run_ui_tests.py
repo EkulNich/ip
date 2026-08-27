@@ -89,9 +89,11 @@ def parse_plan(plan_path: Path) -> list[TestCase]:
 
 def compile_sources(source_dir: Path, build_dir: Path) -> None:
     build_dir.mkdir(parents=True, exist_ok=True)
-    java_files = sorted(str(p) for p in source_dir.glob("*.java"))
+    # Recursive: source files live under package subdirectories (e.g.
+    # lune/, lune/task/), not flat in source_dir itself.
+    java_files = sorted(str(p) for p in source_dir.rglob("*.java"))
     if not java_files:
-        sys.exit(f"No .java files found in {source_dir}")
+        sys.exit(f"No .java files found under {source_dir}")
     result = subprocess.run(
         ["javac", "-d", str(build_dir), *java_files],
         capture_output=True, text=True,
@@ -114,7 +116,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plan", default="test/ui-test-plan.md", type=Path)
     parser.add_argument("--source-dir", default="src/main/java", type=Path)
-    parser.add_argument("--main-class", default="Lune")
+    parser.add_argument("--main-class", default="lune.Lune")
     args = parser.parse_args()
 
     cases = parse_plan(args.plan)
