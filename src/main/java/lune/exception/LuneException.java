@@ -6,6 +6,10 @@ package lune.exception;
  * to the user as-is.
  */
 public class LuneException extends Exception {
+    /**
+     * Creates a new LuneException with a message meant to be shown to the
+     * user as-is.
+     */
     public LuneException(String message) {
         super(message);
     }

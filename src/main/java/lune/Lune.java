@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Entry point and console loop for Lune, a CLI task-tracking chatbot.
+ * Reads commands from stdin, dispatches them via processCommand(), and
+ * persists the task list to disk after every successful change.
+ */
 public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
@@ -35,10 +40,19 @@ public class Lune {
     enum CommandType {
         LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, UNKNOWN;
 
+        /**
+         * Returns this command's literal word as typed by the user, e.g.
+         * "todo" for TODO.
+         */
         String word() {
             return name().toLowerCase();
         }
 
+        /**
+         * Maps an input line's leading word to the matching CommandType,
+         * or UNKNOWN if it doesn't match any recognized command (including
+         * "bye", which is handled separately in main() rather than here).
+         */
         static CommandType fromInput(String input) {
             String word = input.contains(" ") ? input.substring(0, input.indexOf(' ')) : input;
             for (CommandType type : values()) {
@@ -50,6 +64,10 @@ public class Lune {
         }
     }
 
+    /**
+     * Prints the banner/greeting, loads any saved tasks, then reads and
+     * executes commands from stdin until "bye" or input runs out.
+     */
     public static void main(String[] args) {
         String banner = " _                     \n"
                 + "| |   _   _ _ __   ___ \n"
@@ -201,6 +219,12 @@ public class Lune {
         }
     }
 
+    /**
+     * Parses and validates the task number argument of a mark/unmark/delete
+     * command (e.g. "mark 2"), returning it as a 0-based index. Throws if
+     * the argument is missing, isn't a number, or is out of range for the
+     * current task count.
+     */
     static int parseTaskIndex(String input, CommandType command, int taskCount) throws LuneException {
         String commandWord = command.word();
         String arg = input.equals(commandWord) ? "" : input.substring(commandWord.length() + 1).trim();
@@ -225,6 +249,11 @@ public class Lune {
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
 
+    /**
+     * Parses a user-supplied date/time, trying "yyyy-mm-dd" (as a start of
+     * day) first, then "d/m/yyyy HHmm". label identifies which field this
+     * is (e.g. "/by") for the error message if neither format matches.
+     */
     static LocalDateTime parseDateTime(String label, String text) throws LuneException {
         try {
             return LocalDate.parse(text).atStartOfDay();
@@ -304,6 +333,13 @@ public class Lune {
         return tasks;
     }
 
+    /**
+     * Parses one line of the on-disk save format (as written by
+     * saveTasks()) into the matching Task. Throws IllegalArgumentException,
+     * describing exactly what's wrong, for any line that doesn't have the
+     * right number of fields, an unknown type letter, an invalid done
+     * flag, an empty description, or an invalid date/time.
+     */
     static Task parseSavedTask(String line) {
         String[] parts = line.split(" \\| ", -1);
         if (parts.length < 3) {
@@ -351,6 +387,11 @@ public class Lune {
         return task;
     }
 
+    /**
+     * Parses a date/time field from the on-disk save format (LocalDateTime's
+     * own ISO string form), throwing IllegalArgumentException with a clear
+     * message if it isn't valid.
+     */
     static LocalDateTime parseSavedDateTime(String text) {
         try {
             return LocalDateTime.parse(text);
