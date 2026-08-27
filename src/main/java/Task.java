@@ -32,4 +32,13 @@ public class Task {
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
     }
+
+    /**
+     * Renders this task as one line of the on-disk save format, e.g.
+     * "1 | read book". Subclasses prepend their type letter and append
+     * their own fields.
+     */
+    public String toSaveFormat() {
+        return (isDone ? "1" : "0") + " | " + description;
+    }
 }

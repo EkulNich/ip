@@ -1,9 +1,14 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
+    private static final Path SAVE_FILE = Path.of("data", "lune.txt");
 
     /**
      * The commands processCommand() can dispatch on. Enum constant names
@@ -40,23 +45,27 @@ public class Lune {
         System.out.println(LINE + "     Hello! I'm Lune\n     What can I do for you?\n" + LINE);
 
         // ArrayList grows as needed, so there's no fixed task limit to enforce.
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = loadTasks();
 
         // Scanner is enough here since input is just read line-by-line;
         // no need for buffered/streamed reading at this stage.
+        // hasNextLine() guards against input ending without "bye" (e.g. a
+        // piped file, or Ctrl+D) — without it, nextLine() throws
+        // NoSuchElementException once stdin is exhausted.
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
             if (input.equals("bye")) {
-                System.out.println(LINE + "     Bye. Hope to see you again soon!\n" + LINE);
                 break;
             }
             try {
                 processCommand(input, tasks);
+                saveTasks(tasks);
             } catch (LuneException e) {
                 System.out.println(LINE + "     " + e.getMessage() + "\n" + LINE);
             }
         }
+        System.out.println(LINE + "     Bye. Hope to see you again soon!\n" + LINE);
     }
 
     /**
@@ -181,5 +190,112 @@ public class Lune {
         System.out.println(LINE + "     Got it. I've added this task:\n"
                 + "       " + task + "\n"
                 + "     Now you have " + taskCount + " tasks in the list.\n" + LINE);
+    }
+
+    /**
+     * Writes every task to SAVE_FILE, one per line, overwriting whatever was
+     * there before. Called after every successful command so the file on
+     * disk always reflects the current in-memory list.
+     */
+    private static void saveTasks(ArrayList<Task> tasks) {
+        StringBuilder content = new StringBuilder();
+        for (Task task : tasks) {
+            content.append(task.toSaveFormat()).append("\n");
+        }
+        try {
+            Files.createDirectories(SAVE_FILE.getParent());
+            Files.writeString(SAVE_FILE, content.toString());
+        } catch (IOException e) {
+            System.out.println(LINE + "     Uh-oh, I couldn't save your tasks to disk: "
+                    + e.getMessage() + "\n" + LINE);
+        }
+    }
+
+    /**
+     * Reads SAVE_FILE (in the format written by saveTasks()) and rebuilds
+     * the task list from it. Returns an empty list if the file doesn't
+     * exist yet (e.g. first run). A line that can't be parsed (hand-edited
+     * or corrupted) is skipped individually, with a warning, rather than
+     * discarding every other task in the file.
+     *
+     * Known limitation: a task whose description/by/from/to itself contains
+     * the literal " | " delimiter will not round-trip correctly (it'll be
+     * skipped as malformed on the next load), since the save format doesn't
+     * escape the delimiter. Not fixed here — full escaping is out of
+     * proportion for what this file format needs to do.
+     */
+    private static ArrayList<Task> loadTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        if (!Files.exists(SAVE_FILE)) {
+            return tasks;
+        }
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(SAVE_FILE);
+        } catch (IOException e) {
+            System.out.println(LINE + "     Uh-oh, I couldn't read " + SAVE_FILE + " ("
+                    + e.getMessage() + ") — starting with an empty list.\n" + LINE);
+            return tasks;
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            try {
+                tasks.add(parseSavedTask(line));
+            } catch (IllegalArgumentException e) {
+                System.out.println(LINE + "     Uh-oh, skipping unreadable line " + (i + 1)
+                        + " in " + SAVE_FILE + ": " + e.getMessage() + "\n" + LINE);
+            }
+        }
+        return tasks;
+    }
+
+    private static Task parseSavedTask(String line) {
+        String[] parts = line.split(" \\| ", -1);
+        if (parts.length < 3) {
+            throw new IllegalArgumentException("expected at least 3 fields (type | done | description), found "
+                    + parts.length);
+        }
+        String type = parts[0];
+        String doneFlag = parts[1];
+        String description = parts[2];
+        if (!doneFlag.equals("0") && !doneFlag.equals("1")) {
+            throw new IllegalArgumentException("done flag must be \"0\" or \"1\", found \"" + doneFlag + "\"");
+        }
+        if (description.isBlank()) {
+            throw new IllegalArgumentException("description can't be empty");
+        }
+        Task task;
+        switch (type) {
+        case "T":
+            if (parts.length != 3) {
+                throw new IllegalArgumentException("a todo (T) line needs exactly 3 fields, found " + parts.length);
+            }
+            task = new Todo(description);
+            break;
+        case "D":
+            if (parts.length != 4 || parts[3].isBlank()) {
+                throw new IllegalArgumentException(
+                        "a deadline (D) line needs exactly 4 fields with a non-empty /by, found " + parts.length);
+            }
+            task = new Deadline(description, parts[3]);
+            break;
+        case "E":
+            if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
+                throw new IllegalArgumentException(
+                        "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
+                                + parts.length);
+            }
+            task = new Event(description, parts[3], parts[4]);
+            break;
+        default:
+            throw new IllegalArgumentException("unknown task type \"" + type + "\"");
+        }
+        if (doneFlag.equals("1")) {
+            task.markAsDone();
+        }
+        return task;
     }
 }
