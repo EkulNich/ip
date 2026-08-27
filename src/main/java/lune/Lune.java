@@ -38,7 +38,7 @@ public class Lune {
      * exercise fromInput() directly.
      */
     enum CommandType {
-        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, UNKNOWN;
+        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, FIND, UNKNOWN;
 
         /**
          * Returns this command's literal word as typed by the user, e.g.
@@ -212,11 +212,25 @@ public class Lune {
             System.out.println(LINE + onListing + LINE);
             break;
         }
+        case FIND: {
+            String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
+            if (keyword.isEmpty()) {
+                throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
+            }
+            StringBuilder findListing = new StringBuilder("     Here are the matching tasks in your list:\n");
+            for (int i = 0; i < tasks.size(); i++) {
+                if (tasks.get(i).getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                    findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+                }
+            }
+            System.out.println(LINE + findListing + LINE);
+            break;
+        }
         case UNKNOWN:
             // Fallthrough
         default:
             throw new LuneException("Uh-oh, I don't recognize that command — "
-                    + "try todo, deadline, event, list, mark, unmark, delete, on, or bye.");
+                    + "try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.");
         }
     }
 
