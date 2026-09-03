@@ -14,6 +14,18 @@
     -fx-border-radius: 1em 1em 1em 0;
 }
 
+.add-label {
+    -fx-background-color: linear-gradient(to bottom right, #b6ff9c, #6dff9c);
+}
+
+.marked-label {
+    -fx-background-color: linear-gradient(to bottom right, #ffe58c, #ffc36d);
+}
+
+.delete-label {
+    -fx-background-color: linear-gradient(to bottom right, #ff9c9c, #ff6d6d);
+}
+
 #displayPicture {
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 5, 5);
     -fx-scale-x: 1;

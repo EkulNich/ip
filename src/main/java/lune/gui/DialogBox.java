@@ -66,4 +66,34 @@ public class DialogBox extends HBox {
         db.flip();
         return db;
     }
+
+    /**
+     * Creates a left-aligned dialog box for one of Lune's replies, colored
+     * according to commandType (e.g. "todo", "mark", "delete") so different
+     * kinds of replies are visually distinct.
+     */
+    public static DialogBox getLuneDialog(String text, Image image, String commandType) {
+        DialogBox db = getLuneDialog(text, image);
+        db.changeDialogStyle(commandType);
+        return db;
+    }
+
+    private void changeDialogStyle(String commandType) {
+        switch (commandType) {
+            case "todo":
+            case "deadline":
+            case "event":
+                dialog.getStyleClass().add("add-label");
+                break;
+            case "mark":
+            case "unmark":
+                dialog.getStyleClass().add("marked-label");
+                break;
+            case "delete":
+                dialog.getStyleClass().add("delete-label");
+                break;
+            default:
+                break;
+        }
+    }
 }
