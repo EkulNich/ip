@@ -48,6 +48,7 @@ public class DialogBox extends HBox {
         ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
         FXCollections.reverse(tmp);
         this.getChildren().setAll(tmp);
+        dialog.getStyleClass().add("reply-label");
     }
 
     /**

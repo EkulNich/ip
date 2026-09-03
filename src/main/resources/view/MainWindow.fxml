@@ -7,7 +7,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="lune.gui.MainWindow">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="lune.gui.MainWindow"
+            stylesheets="@../css/main.css">
     <children>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS"
                     AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0"
