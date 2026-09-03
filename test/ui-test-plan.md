@@ -74,11 +74,11 @@ bye
 
 ## Test Case 3: Add a deadline and list it
 
-**Aim:** Verify `deadline ... /by ...` adds a task tagged `[D]` with its `(by: ...)` suffix.
+**Aim:** Verify `deadline ... /by ...` adds a task tagged `[D]`, parsing the `yyyy-mm-dd` date (also accepts `d/m/yyyy HHmm` with a time) and displaying it as `MMM dd yyyy`.
 
 **Input:**
 ```input
-deadline return book /by Sunday
+deadline return book /by 2019-10-15
 list
 bye
 ```
@@ -98,13 +98,13 @@ bye
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Sunday)
+       [D][ ] return book (by: Oct 15 2019)
      Now you have 1 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[D][ ] return book (by: Sunday)
+     1.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -114,11 +114,11 @@ bye
 
 ## Test Case 4: Add an event and list it
 
-**Aim:** Verify `event ... /from ... /to ...` adds a task tagged `[E]` with its `(from: ... to: ...)` suffix.
+**Aim:** Verify `event ... /from ... /to ...` adds a task tagged `[E]`, parsing both dates (`yyyy-mm-dd` or `d/m/yyyy HHmm`) and displaying them as `MMM dd yyyy`.
 
 **Input:**
 ```input
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-10-16 /to 2019-10-18
 list
 bye
 ```
@@ -138,13 +138,13 @@ bye
 
     ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Mon 2pm to: 4pm)
+       [E][ ] project meeting (from: Oct 16 2019 to: Oct 18 2019)
      Now you have 1 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+     1.[E][ ] project meeting (from: Oct 16 2019 to: Oct 18 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -217,8 +217,8 @@ bye
 **Input:**
 ```input
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 /to 2019-08-08
 todo join sports club
 mark 1
 mark 4
@@ -248,13 +248,13 @@ bye
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: June 6th)
+       [D][ ] return book (by: Jun 06 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+       [E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
      Now you have 3 tasks in the list.
     ____________________________________________________________
 
@@ -283,8 +283,8 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][ ] return book (by: June 6th)
-     3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+     2.[D][ ] return book (by: Jun 06 2019)
+     3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
      4.[T][X] join sports club
      5.[T][ ] borrow book
     ____________________________________________________________
@@ -293,6 +293,7 @@ bye
      Bye. Hope to see you again soon!
     ____________________________________________________________
 ```
+
 ## Test Case 7: Consecutive errors leave the task list untouched
 
 **Aim:** Verify that back-to-back invalid commands (empty todo/deadline/event) are each rejected without adding a phantom task, leaving the list exactly as it was before them.
@@ -331,11 +332,11 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, a deadline needs a description — try: deadline <what to do> /by <when>
+     Uh-oh, a deadline needs a description — try: deadline <what to do> /by <date>
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, an event needs a description — try: event <what to do> /from <start> /to <end>
+     Uh-oh, an event needs a description — try: event <what to do> /from <date> /to <date>
     ____________________________________________________________
 
     ____________________________________________________________
@@ -356,7 +357,7 @@ bye
 ```input
 todo read book
 deadline return book
-deadline return book /by Sunday
+deadline return book /by 2019-06-06
 list
 bye
 ```
@@ -381,19 +382,19 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, a deadline needs a /by date or time — try: deadline return book /by <when>
+     Uh-oh, a deadline needs a /by date — try: deadline return book /by <date>
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Sunday)
+       [D][ ] return book (by: Jun 06 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] read book
-     2.[D][ ] return book (by: Sunday)
+     2.[D][ ] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -407,8 +408,8 @@ bye
 
 **Input:**
 ```input
-event meeting /from Mon
-event meeting /from Mon /to 2pm
+event meeting /from 2019-06-06
+event meeting /from 2019-06-06 /to 2019-06-08
 list
 bye
 ```
@@ -427,18 +428,18 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, an event needs a /to date or time after /from — try: event meeting /from <start> /to <end>
+     Uh-oh, an event needs a /to date after /from — try: event meeting /from <date> /to <date>
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] meeting (from: Mon to: 2pm)
+       [E][ ] meeting (from: Jun 06 2019 to: Jun 08 2019)
      Now you have 1 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[E][ ] meeting (from: Mon to: 2pm)
+     1.[E][ ] meeting (from: Jun 06 2019 to: Jun 08 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -547,7 +548,7 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, I don't recognize that command — try todo, deadline, event, list, mark, unmark, delete, or bye.
+     Uh-oh, I don't recognize that command — try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -556,7 +557,7 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, I don't recognize that command — try todo, deadline, event, list, mark, unmark, delete, or bye.
+     Uh-oh, I don't recognize that command — try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1516,13 +1517,13 @@ bye
 
 ## Test Case 15: Tasks are saved to disk after every change
 
-**Aim:** Verify that adding, marking, and deleting tasks each write the current task list to `data/lune.txt` in the pipe-separated save format, and that a deleted task is actually removed from the file (not just left as a stale line).
+**Aim:** Verify that adding, marking, and deleting tasks each write the current task list to `data/lune.txt` in the pipe-separated save format (dates/times stored via `LocalDateTime`'s ISO format), and that a deleted task is actually removed from the file (not just left as a stale line).
 
 **Input:**
 ```input
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th /to 2-4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 /to 2019-08-08
 todo join sports club
 mark 1
 mark 4
@@ -1551,13 +1552,13 @@ bye
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: June 6th)
+       [D][ ] return book (by: Jun 06 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Aug 6th to: 2-4pm)
+       [E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
      Now you have 3 tasks in the list.
     ____________________________________________________________
 
@@ -1579,7 +1580,7 @@ bye
 
     ____________________________________________________________
      Noted. I've removed this task:
-       [D][ ] return book (by: June 6th)
+       [D][ ] return book (by: Jun 06 2019)
      Now you have 3 tasks in the list.
     ____________________________________________________________
 
@@ -1591,19 +1592,19 @@ bye
 **Expected file (`data/lune.txt`):**
 ```file:data/lune.txt
 T | 1 | read book
-E | 0 | project meeting | Aug 6th | 2-4pm
+E | 0 | project meeting | 2019-08-06T00:00 | 2019-08-08T00:00
 T | 1 | join sports club
 ```
 
 ## Test Case 16: Tasks are loaded from an existing save file on startup
 
-**Aim:** Verify that on startup, an existing `data/lune.txt` (in the format `saveTasks()` writes) is correctly parsed back into todos/deadlines/events with the right done status, and that subsequent commands operate correctly on the loaded tasks.
+**Aim:** Verify that on startup, an existing `data/lune.txt` (in the format `saveTasks()` writes) is correctly parsed back into todos/deadlines/events — including parsing saved date/times back into `LocalDateTime` and displaying them as `MMM dd yyyy` — with the right done status, and that subsequent commands operate correctly on the loaded tasks.
 
 **Given file:**
 ```given-file:data/lune.txt
 T | 1 | read book
-D | 0 | return book | June 6th
-E | 0 | project meeting | Aug 6th | 2-4pm
+D | 0 | return book | 2019-06-06T00:00
+E | 0 | project meeting | 2019-08-06T00:00 | 2019-08-08T00:00
 T | 1 | join sports club
 ```
 
@@ -1631,8 +1632,8 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][ ] return book (by: June 6th)
-     3.[E][ ] project meeting (from: Aug 6th to: 2-4pm)
+     2.[D][ ] return book (by: Jun 06 2019)
+     3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
      4.[T][X] join sports club
     ____________________________________________________________
 
@@ -1644,8 +1645,8 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] read book
-     2.[D][ ] return book (by: June 6th)
-     3.[E][ ] project meeting (from: Aug 6th to: 2-4pm)
+     2.[D][ ] return book (by: Jun 06 2019)
+     3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
      4.[T][X] join sports club
     ____________________________________________________________
 
@@ -1703,9 +1704,9 @@ bye
 ```given-file:data/lune.txt
 T | 1 | read book
 this is garbage
-D | 0 | return book | June 6th
+D | 0 | return book | 2019-06-06T00:00
 X | 0 | unknown type
-E | 0 | project meeting | Aug 6th
+E | 0 | project meeting | 2019-08-06T00:00
 T | 2 | bad done flag
 
 T | 1 | join sports club
@@ -1749,7 +1750,7 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][ ] return book (by: June 6th)
+     2.[D][ ] return book (by: Jun 06 2019)
      3.[T][X] join sports club
     ____________________________________________________________
 
@@ -1790,6 +1791,354 @@ list
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 20: Invalid dates are rejected when adding a deadline/event
+
+**Aim:** Verify `deadline`/`event` reject a `/by`, `/from`, or `/to` value that matches neither accepted format (`yyyy-mm-dd` or `d/m/yyyy HHmm`) — including a syntactically-plausible-but-invalid one like month 13 — without adding a task or corrupting the list, and that a valid date afterward still works.
+
+**Input:**
+```input
+deadline pay rent /by not-a-date
+event trip /from 2019-13-45 /to 2019-10-20
+event trip /from 2019-10-20 /to nonsense
+deadline pay rent /by 2019-10-20
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, "not-a-date" isn't a valid /by date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, "2019-13-45" isn't a valid /from date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, "nonsense" isn't a valid /to date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] pay rent (by: Oct 20 2019)
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[D][ ] pay rent (by: Oct 20 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 21: An invalid date in the save file is skipped like any other corrupted line
+
+**Aim:** Verify a save-file line whose date/time isn't valid (e.g. hand-edited) is skipped individually with a clear reason, consistent with how other corrupted lines are handled, rather than crashing or discarding the rest of the file.
+
+**Given file:**
+```given-file:data/lune.txt
+T | 1 | read book
+D | 0 | return book | not-a-date
+T | 1 | join sports club
+```
+
+**Input:**
+```input
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, skipping unreadable line 2 in data/lune.txt: "not-a-date" isn't a valid saved date/time
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+     2.[T][X] join sports club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 22: deadline/event accept d/m/yyyy HHmm as well as yyyy-mm-dd
+
+**Aim:** Verify `/by`, `/from`, and `/to` accept a date with a time attached in `d/m/yyyy HHmm` form (e.g. `2/12/2019 1800` for 6pm on 2 Dec 2019), storing and displaying the time alongside the date rather than treating the whole thing as an opaque string.
+
+**Input:**
+```input
+deadline return book /by 2/12/2019 1800
+event team meeting /from 2/12/2019 0900 /to 2/12/2019 1030
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Dec 02 2019, 6:00 pm)
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] team meeting (from: Dec 02 2019, 9:00 am to: Dec 02 2019, 10:30 am)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[D][ ] return book (by: Dec 02 2019, 6:00 pm)
+     2.[E][ ] team meeting (from: Dec 02 2019, 9:00 am to: Dec 02 2019, 10:30 am)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 23: "on <date>" lists deadlines/events occurring on that date
+
+**Aim:** Verify `on <date>` (the date/time stretch goal) lists only deadlines/events associated with the given date — a deadline matches by exact date, an event matches if the date falls within its from/to range inclusive — excluding todos entirely, preserving each task's real list-position number (not a renumbered filtered index), and showing an empty (but non-crashing) result when nothing matches.
+
+**Input:**
+```input
+todo pack bags
+deadline pay rent /by 2019-12-02
+event conference /from 2019-12-01 /to 2019-12-05
+deadline submit report /by 2019-12-10
+on 2019-12-02
+on 2019-12-11
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] pack bags
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] pay rent (by: Dec 02 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] conference (from: Dec 01 2019 to: Dec 05 2019)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] submit report (by: Dec 10 2019)
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines/events on Dec 02 2019:
+     2.[D][ ] pay rent (by: Dec 02 2019)
+     3.[E][ ] conference (from: Dec 01 2019 to: Dec 05 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines/events on Dec 11 2019:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 24: "on" rejects a missing or invalid date
+
+**Aim:** Verify `on` with no argument and `on` with an unparseable date are both rejected with a clear message rather than crashing, and that `on` still works normally afterward.
+
+**Input:**
+```input
+on
+on not-a-date
+todo pack bags
+on 2019-12-02
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, tell me which date — try: on <date>
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, "not-a-date" isn't a valid on date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] pack bags
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the deadlines/events on Dec 02 2019:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Test Case 25: "find <keyword>" locates tasks by description
+
+**Aim:** Verify `find` lists only tasks whose description contains the keyword (case-insensitively), preserving each task's real list-position number, excluding non-matching tasks, matching the requirement's own example (this exercises the exact scenario given: two matching tasks of different types both shown, "buy milk" excluded), showing an empty result when nothing matches, and rejecting a missing keyword.
+
+**Input:**
+```input
+todo read book
+mark 1
+deadline return book /by 2019-06-06
+mark 2
+todo buy milk
+find book
+find BOOK
+find nothing
+find
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Hello! I'm Lune
+     What can I do for you?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Jun 06 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [D][X] return book (by: Jun 06 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] buy milk
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     1.[T][X] read book
+     2.[D][X] return book (by: Jun 06 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     1.[T][X] read book
+     2.[D][X] return book (by: Jun 06 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Uh-oh, tell me what to search for — try: find <keyword>
     ____________________________________________________________
 
     ____________________________________________________________
