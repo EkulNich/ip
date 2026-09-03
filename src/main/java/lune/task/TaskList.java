@@ -29,6 +29,11 @@ public class TaskList implements Iterable<Task> {
 
     /**
      * Adds a task to the end of the list.
+     *
+     * <p>Kept as a single-argument method rather than a varargs
+     * {@code add(Task... tasks)}: every call site adds exactly one task at
+     * a time, so varargs would add an array allocation per call with no
+     * caller ever benefiting from passing more than one task at once.</p>
      */
     public void add(Task task) {
         tasks.add(task);
