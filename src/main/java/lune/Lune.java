@@ -27,6 +27,9 @@ public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
     private static final Path SAVE_FILE = Path.of("data", "lune.txt");
+    // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
+    // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
+    private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
 
     /**
      * The commands processCommand() can dispatch on. Enum constant names
@@ -109,128 +112,128 @@ public class Lune {
      */
     private static void processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
-        case LIST:
-            StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
-            for (int i = 0; i < tasks.size(); i++) {
-                listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-            }
-            System.out.println(LINE + listing + LINE);
-            break;
-        case MARK: {
-            int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
-            tasks.get(index).markAsDone();
-            System.out.println(LINE + "     Nice! I've marked this task as done:\n"
-                    + "       " + tasks.get(index) + "\n" + LINE);
-            break;
-        }
-        case UNMARK: {
-            int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
-            tasks.get(index).markAsUndone();
-            System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
-                    + "       " + tasks.get(index) + "\n" + LINE);
-            break;
-        }
-        case DELETE: {
-            int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
-            Task removed = tasks.remove(index);
-            System.out.println(LINE + "     Noted. I've removed this task:\n"
-                    + "       " + removed + "\n"
-                    + "     Now you have " + tasks.size() + " tasks in the list.\n" + LINE);
-            break;
-        }
-        case TODO: {
-            String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
-            if (description.isEmpty()) {
-                throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
-            }
-            tasks.add(new Todo(description));
-            printAdded(tasks.get(tasks.size() - 1), tasks.size());
-            break;
-        }
-        case DEADLINE: {
-            String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
-            int byIndex = rest.indexOf(" /by ");
-            String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
-            if (description.isEmpty()) {
-                throw new LuneException("Uh-oh, a deadline needs a description — "
-                        + "try: deadline <what to do> /by <date>");
-            }
-            if (byIndex == -1) {
-                throw new LuneException("Uh-oh, a deadline needs a /by date — "
-                        + "try: deadline " + description + " /by <date>");
-            }
-            String byText = rest.substring(byIndex + " /by ".length()).trim();
-            if (byText.isEmpty()) {
-                throw new LuneException("Uh-oh, a deadline's /by date can't be empty.");
-            }
-            LocalDateTime by = parseDateTime("/by", byText);
-            tasks.add(new Deadline(description, by));
-            printAdded(tasks.get(tasks.size() - 1), tasks.size());
-            break;
-        }
-        case EVENT: {
-            String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
-            int fromIndex = rest.indexOf(" /from ");
-            int toIndex = rest.indexOf(" /to ");
-            String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
-            if (description.isEmpty()) {
-                throw new LuneException("Uh-oh, an event needs a description — "
-                        + "try: event <what to do> /from <date> /to <date>");
-            }
-            if (fromIndex == -1) {
-                throw new LuneException("Uh-oh, an event needs a /from date — "
-                        + "try: event " + description + " /from <date> /to <date>");
-            }
-            if (toIndex == -1 || toIndex < fromIndex) {
-                throw new LuneException("Uh-oh, an event needs a /to date after /from — "
-                        + "try: event " + description + " /from <date> /to <date>");
-            }
-            String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
-            String toText = rest.substring(toIndex + " /to ".length()).trim();
-            if (fromText.isEmpty() || toText.isEmpty()) {
-                throw new LuneException("Uh-oh, an event's /from and /to dates can't be empty.");
-            }
-            LocalDateTime from = parseDateTime("/from", fromText);
-            LocalDateTime to = parseDateTime("/to", toText);
-            tasks.add(new Event(description, from, to));
-            printAdded(tasks.get(tasks.size() - 1), tasks.size());
-            break;
-        }
-        case ON: {
-            String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
-            if (text.isEmpty()) {
-                throw new LuneException("Uh-oh, tell me which date — try: on <date>");
-            }
-            LocalDate queryDate = parseDateTime("on", text).toLocalDate();
-            StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
-                    + Task.formatDate(queryDate) + ":\n");
-            for (int i = 0; i < tasks.size(); i++) {
-                if (tasks.get(i).occursOn(queryDate)) {
-                    onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+            case LIST:
+                StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
+                for (int i = 0; i < tasks.size(); i++) {
+                    listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
                 }
+                System.out.println(LINE + listing + LINE);
+                break;
+            case MARK: {
+                int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
+                tasks.get(index).markAsDone();
+                System.out.println(LINE + "     Nice! I've marked this task as done:\n"
+                        + "       " + tasks.get(index) + "\n" + LINE);
+                break;
             }
-            System.out.println(LINE + onListing + LINE);
-            break;
-        }
-        case FIND: {
-            String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
-            if (keyword.isEmpty()) {
-                throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
+            case UNMARK: {
+                int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
+                tasks.get(index).markAsUndone();
+                System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
+                        + "       " + tasks.get(index) + "\n" + LINE);
+                break;
             }
-            StringBuilder findListing = new StringBuilder("     Here are the matching tasks in your list:\n");
-            for (int i = 0; i < tasks.size(); i++) {
-                if (tasks.get(i).getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                    findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+            case DELETE: {
+                int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
+                Task removed = tasks.remove(index);
+                System.out.println(LINE + "     Noted. I've removed this task:\n"
+                        + "       " + removed + "\n"
+                        + "     Now you have " + tasks.size() + " tasks in the list.\n" + LINE);
+                break;
+            }
+            case TODO: {
+                String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
+                if (description.isEmpty()) {
+                    throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
                 }
+                tasks.add(new Todo(description));
+                printAdded(tasks.get(tasks.size() - 1), tasks.size());
+                break;
             }
-            System.out.println(LINE + findListing + LINE);
-            break;
-        }
-        case UNKNOWN:
-            // Fallthrough
-        default:
-            throw new LuneException("Uh-oh, I don't recognize that command — "
-                    + "try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.");
+            case DEADLINE: {
+                String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
+                int byIndex = rest.indexOf(" /by ");
+                String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
+                if (description.isEmpty()) {
+                    throw new LuneException("Uh-oh, a deadline needs a description — "
+                            + "try: deadline <what to do> /by <date>");
+                }
+                if (byIndex == -1) {
+                    throw new LuneException("Uh-oh, a deadline needs a /by date — "
+                            + "try: deadline " + description + " /by <date>");
+                }
+                String byText = rest.substring(byIndex + " /by ".length()).trim();
+                if (byText.isEmpty()) {
+                    throw new LuneException("Uh-oh, a deadline's /by date can't be empty.");
+                }
+                LocalDateTime by = parseDateTime("/by", byText);
+                tasks.add(new Deadline(description, by));
+                printAdded(tasks.get(tasks.size() - 1), tasks.size());
+                break;
+            }
+            case EVENT: {
+                String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
+                int fromIndex = rest.indexOf(" /from ");
+                int toIndex = rest.indexOf(" /to ");
+                String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
+                if (description.isEmpty()) {
+                    throw new LuneException("Uh-oh, an event needs a description — "
+                            + "try: event <what to do> /from <date> /to <date>");
+                }
+                if (fromIndex == -1) {
+                    throw new LuneException("Uh-oh, an event needs a /from date — "
+                            + "try: event " + description + " /from <date> /to <date>");
+                }
+                if (toIndex == -1 || toIndex < fromIndex) {
+                    throw new LuneException("Uh-oh, an event needs a /to date after /from — "
+                            + "try: event " + description + " /from <date> /to <date>");
+                }
+                String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
+                String toText = rest.substring(toIndex + " /to ".length()).trim();
+                if (fromText.isEmpty() || toText.isEmpty()) {
+                    throw new LuneException("Uh-oh, an event's /from and /to dates can't be empty.");
+                }
+                LocalDateTime from = parseDateTime("/from", fromText);
+                LocalDateTime to = parseDateTime("/to", toText);
+                tasks.add(new Event(description, from, to));
+                printAdded(tasks.get(tasks.size() - 1), tasks.size());
+                break;
+            }
+            case ON: {
+                String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
+                if (text.isEmpty()) {
+                    throw new LuneException("Uh-oh, tell me which date — try: on <date>");
+                }
+                LocalDate queryDate = parseDateTime("on", text).toLocalDate();
+                StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
+                        + Task.formatDate(queryDate) + ":\n");
+                for (int i = 0; i < tasks.size(); i++) {
+                    if (tasks.get(i).occursOn(queryDate)) {
+                        onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+                    }
+                }
+                System.out.println(LINE + onListing + LINE);
+                break;
+            }
+            case FIND: {
+                String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
+                if (keyword.isEmpty()) {
+                    throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
+                }
+                StringBuilder findListing = new StringBuilder("     Here are the matching tasks in your list:\n");
+                for (int i = 0; i < tasks.size(); i++) {
+                    if (tasks.get(i).getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                        findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+                    }
+                }
+                System.out.println(LINE + findListing + LINE);
+                break;
+            }
+            case UNKNOWN:
+                // Fallthrough
+            default:
+                throw new LuneException("Uh-oh, I don't recognize that command — "
+                        + "try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.");
         }
     }
 
@@ -259,10 +262,6 @@ public class Lune {
         }
         return number - 1;
     }
-
-    // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
-    // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
-    private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
 
     /**
      * Parses a user-supplied date/time, trying "yyyy-mm-dd" (as a start of
@@ -372,29 +371,29 @@ public class Lune {
         }
         Task task;
         switch (type) {
-        case "T":
-            if (parts.length != 3) {
-                throw new IllegalArgumentException("a todo (T) line needs exactly 3 fields, found " + parts.length);
-            }
-            task = new Todo(description);
-            break;
-        case "D":
-            if (parts.length != 4 || parts[3].isBlank()) {
-                throw new IllegalArgumentException(
-                        "a deadline (D) line needs exactly 4 fields with a non-empty /by, found " + parts.length);
-            }
-            task = new Deadline(description, parseSavedDateTime(parts[3]));
-            break;
-        case "E":
-            if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
-                throw new IllegalArgumentException(
-                        "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
-                                + parts.length);
-            }
-            task = new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
-            break;
-        default:
-            throw new IllegalArgumentException("unknown task type \"" + type + "\"");
+            case "T":
+                if (parts.length != 3) {
+                    throw new IllegalArgumentException("a todo (T) line needs exactly 3 fields, found " + parts.length);
+                }
+                task = new Todo(description);
+                break;
+            case "D":
+                if (parts.length != 4 || parts[3].isBlank()) {
+                    throw new IllegalArgumentException(
+                            "a deadline (D) line needs exactly 4 fields with a non-empty /by, found " + parts.length);
+                }
+                task = new Deadline(description, parseSavedDateTime(parts[3]));
+                break;
+            case "E":
+                if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
+                    throw new IllegalArgumentException(
+                            "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
+                                    + parts.length);
+                }
+                task = new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
+                break;
+            default:
+                throw new IllegalArgumentException("unknown task type \"" + type + "\"");
         }
         if (doneFlag.equals("1")) {
             task.markAsDone();
