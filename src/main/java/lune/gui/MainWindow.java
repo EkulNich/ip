@@ -62,7 +62,7 @@ public class MainWindow extends AnchorPane {
         String response = lune.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getLuneDialog(response, luneImage));
+                DialogBox.getLuneDialog(response, luneImage, lune.getCommandType()));
         userInput.clear();
         if (input.equals("bye")) {
             PauseTransition delay = new PauseTransition(Duration.seconds(1.5));
