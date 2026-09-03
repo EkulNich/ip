@@ -34,6 +34,7 @@ public class Lune {
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
 
     private final TaskList tasks;
+    private CommandType lastCommandType = CommandType.UNKNOWN;
 
     /**
      * The commands processCommand() can dispatch on. Enum constant names
@@ -125,8 +126,10 @@ public class Lune {
      */
     public String getResponse(String input) {
         if (input.equals("bye")) {
+            lastCommandType = CommandType.UNKNOWN;
             return "Bye. Hope to see you again soon!";
         }
+        lastCommandType = CommandType.fromInput(input);
         try {
             String message = processCommand(input, tasks);
             saveTasks(tasks);
@@ -134,6 +137,16 @@ public class Lune {
         } catch (LuneException e) {
             return e.getMessage();
         }
+    }
+
+    /**
+     * Returns the CommandType of the most recent command handled by
+     * getResponse(), as its lowercase word (e.g. "todo", "mark"). Lets the
+     * GUI style each reply bubble according to what kind of command
+     * produced it.
+     */
+    public String getCommandType() {
+        return lastCommandType.word();
     }
 
     /**
