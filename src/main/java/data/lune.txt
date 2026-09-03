@@ -2,4 +2,3 @@ T | 0 | read
 T | 0 | learn
 T | 0 | study
 D | 0 | return book | 2019-12-02T18:00
-D | 0 | cry | 2019-10-15T00:00

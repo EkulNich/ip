@@ -13,6 +13,10 @@ src/main/resources/docs/
 *.iml
 bin/
 
+# Compiled classes (this project has no Gradle build yet, so IDEs/javac
+# sometimes compile straight into src/main/java rather than a build dir)
+*.class
+
 # Temp files
 _temp/
 

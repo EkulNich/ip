@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'checkstyle'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
@@ -9,12 +10,30 @@ java {
     targetCompatibility = JavaVersion.VERSION_25
 }
 
+checkstyle {
+    toolVersion = '14.1.0'
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     String jUnitVersion = '5.14.4'
+    String javaFxVersion = '17.0.7'
+
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:linux"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:linux"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:linux"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
 
@@ -37,7 +56,7 @@ test {
 }
 
 application {
-    mainClass = 'lune.Lune'
+    mainClass = 'lune.gui.Launcher'
 }
 
 jar {
@@ -51,6 +70,13 @@ shadowJar {
     archiveFileName = 'lune.jar'
 }
 
-run {
+// `./gradlew run` now launches the JavaFX GUI (application.mainClass above).
+// The original console chatbot is still available via its own task, since
+// it's still a fully working, separately useful way to run Lune.
+tasks.register('runConsole', JavaExec) {
+    group = 'application'
+    description = 'Runs Lune as a console app instead of the JavaFX GUI.'
+    mainClass = 'lune.Lune'
+    classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
 }

@@ -215,14 +215,14 @@ public class LuneTest {
 
     @Test
     public void parseSavedTask_eventMissingToField_exceptionThrown() {
-        assertThrows(IllegalArgumentException.class,
-                () -> Lune.parseSavedTask("E | 0 | project meeting | 2019-08-06T00:00"));
+        assertThrows(IllegalArgumentException.class, () ->
+                Lune.parseSavedTask("E | 0 | project meeting | 2019-08-06T00:00"));
     }
 
     @Test
     public void parseSavedTask_eventWithBlankTo_exceptionThrown() {
-        assertThrows(IllegalArgumentException.class,
-                () -> Lune.parseSavedTask("E | 0 | project meeting | 2019-08-06T00:00 | "));
+        assertThrows(IllegalArgumentException.class, () ->
+                Lune.parseSavedTask("E | 0 | project meeting | 2019-08-06T00:00 | "));
     }
 
     // --- parseSavedDateTime ---

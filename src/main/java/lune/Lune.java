@@ -21,7 +21,9 @@ import lune.task.Todo;
 /**
  * Entry point and console loop for Lune, a CLI task-tracking chatbot.
  * Reads commands from stdin, dispatches them via processCommand(), and
- * persists the task list to disk after every successful change.
+ * persists the task list to disk after every successful change. Also
+ * exposes getResponse(), an instance method the JavaFX GUI (lune.gui) uses
+ * to reuse this exact same command logic outside the console loop.
  */
 public class Lune {
     private static final String LINE =
@@ -30,6 +32,8 @@ public class Lune {
     // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+
+    private final TaskList tasks;
 
     /**
      * The commands processCommand() can dispatch on. Enum constant names
@@ -68,6 +72,13 @@ public class Lune {
     }
 
     /**
+     * Creates a new Lune, loading any previously-saved tasks from disk.
+     */
+    public Lune() {
+        this.tasks = new TaskList(loadTasks());
+    }
+
+    /**
      * Prints the banner/greeting, loads any saved tasks, then reads and
      * executes commands from stdin until "bye" or input runs out.
      */
@@ -96,7 +107,8 @@ public class Lune {
                 break;
             }
             try {
-                processCommand(input, tasks);
+                String message = processCommand(input, tasks);
+                System.out.println(LINE + message + LINE);
                 saveTasks(tasks);
             } catch (LuneException e) {
                 System.out.println(LINE + "     " + e.getMessage() + "\n" + LINE);
@@ -106,40 +118,57 @@ public class Lune {
     }
 
     /**
-     * Executes one non-"bye" command. Throws LuneException, with a message
+     * Generates Lune's response to one line of user input, for the GUI to
+     * display in a chat bubble. Reuses the exact same command logic as the
+     * console loop in main() (processCommand()), but returns plain text
+     * instead of the console's line-separator/indent-prefixed formatting.
+     */
+    public String getResponse(String input) {
+        if (input.equals("bye")) {
+            return "Bye. Hope to see you again soon!";
+        }
+        try {
+            String message = processCommand(input, tasks);
+            saveTasks(tasks);
+            return dedent(message);
+        } catch (LuneException e) {
+            return e.getMessage();
+        }
+    }
+
+    /**
+     * Executes one non-"bye" command and returns the resulting message
+     * (formatted for the console: each line prefixed with indentation,
+     * the way main() prints it). Throws LuneException, with a message
      * meant to be shown to the user as-is, for any command Lune can't
      * carry out.
      */
-    private static void processCommand(String input, TaskList tasks) throws LuneException {
+    private static String processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
             case LIST:
                 StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
                 for (int i = 0; i < tasks.size(); i++) {
                     listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
                 }
-                System.out.println(LINE + listing + LINE);
-                break;
+                return listing.toString();
             case MARK: {
                 int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
                 tasks.get(index).markAsDone();
-                System.out.println(LINE + "     Nice! I've marked this task as done:\n"
-                        + "       " + tasks.get(index) + "\n" + LINE);
-                break;
+                return "     Nice! I've marked this task as done:\n"
+                        + "       " + tasks.get(index) + "\n";
             }
             case UNMARK: {
                 int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
                 tasks.get(index).markAsUndone();
-                System.out.println(LINE + "     OK, I've marked this task as not done yet:\n"
-                        + "       " + tasks.get(index) + "\n" + LINE);
-                break;
+                return "     OK, I've marked this task as not done yet:\n"
+                        + "       " + tasks.get(index) + "\n";
             }
             case DELETE: {
                 int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
                 Task removed = tasks.remove(index);
-                System.out.println(LINE + "     Noted. I've removed this task:\n"
+                return "     Noted. I've removed this task:\n"
                         + "       " + removed + "\n"
-                        + "     Now you have " + tasks.size() + " tasks in the list.\n" + LINE);
-                break;
+                        + "     Now you have " + tasks.size() + " tasks in the list.\n";
             }
             case TODO: {
                 String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
@@ -147,8 +176,7 @@ public class Lune {
                     throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
                 }
                 tasks.add(new Todo(description));
-                printAdded(tasks.get(tasks.size() - 1), tasks.size());
-                break;
+                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
             }
             case DEADLINE: {
                 String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
@@ -168,8 +196,7 @@ public class Lune {
                 }
                 LocalDateTime by = parseDateTime("/by", byText);
                 tasks.add(new Deadline(description, by));
-                printAdded(tasks.get(tasks.size() - 1), tasks.size());
-                break;
+                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
             }
             case EVENT: {
                 String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
@@ -196,8 +223,7 @@ public class Lune {
                 LocalDateTime from = parseDateTime("/from", fromText);
                 LocalDateTime to = parseDateTime("/to", toText);
                 tasks.add(new Event(description, from, to));
-                printAdded(tasks.get(tasks.size() - 1), tasks.size());
-                break;
+                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
             }
             case ON: {
                 String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
@@ -212,8 +238,7 @@ public class Lune {
                         onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
                     }
                 }
-                System.out.println(LINE + onListing + LINE);
-                break;
+                return onListing.toString();
             }
             case FIND: {
                 String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
@@ -226,8 +251,7 @@ public class Lune {
                         findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
                     }
                 }
-                System.out.println(LINE + findListing + LINE);
-                break;
+                return findListing.toString();
             }
             case UNKNOWN:
                 // Fallthrough
@@ -281,10 +305,25 @@ public class Lune {
         }
     }
 
-    private static void printAdded(Task task, int taskCount) {
-        System.out.println(LINE + "     Got it. I've added this task:\n"
+    private static String formatAdded(Task task, int taskCount) {
+        return "     Got it. I've added this task:\n"
                 + "       " + task + "\n"
-                + "     Now you have " + taskCount + " tasks in the list.\n" + LINE);
+                + "     Now you have " + taskCount + " tasks in the list.\n";
+    }
+
+    /**
+     * Strips processCommand()'s console-only formatting (the fixed 5-space
+     * indent every line is prefixed with, for lining up under LINE) so the
+     * message reads cleanly as plain text in a GUI chat bubble. A line
+     * that had extra indentation beyond the fixed 5 spaces (e.g. a task
+     * shown under a confirmation message) keeps that extra indent.
+     */
+    private static String dedent(String message) {
+        StringBuilder result = new StringBuilder();
+        for (String line : message.split("\n", -1)) {
+            result.append(line.length() >= 5 ? line.substring(5) : line).append("\n");
+        }
+        return result.toString().strip();
     }
 
     /**
@@ -373,14 +412,16 @@ public class Lune {
         switch (type) {
             case "T":
                 if (parts.length != 3) {
-                    throw new IllegalArgumentException("a todo (T) line needs exactly 3 fields, found " + parts.length);
+                    throw new IllegalArgumentException(
+                            "a todo (T) line needs exactly 3 fields, found " + parts.length);
                 }
                 task = new Todo(description);
                 break;
             case "D":
                 if (parts.length != 4 || parts[3].isBlank()) {
                     throw new IllegalArgumentException(
-                            "a deadline (D) line needs exactly 4 fields with a non-empty /by, found " + parts.length);
+                            "a deadline (D) line needs exactly 4 fields with a non-empty /by, found "
+                                    + parts.length);
                 }
                 task = new Deadline(description, parseSavedDateTime(parts[3]));
                 break;
@@ -414,4 +455,3 @@ public class Lune {
         }
     }
 }
-
