@@ -479,27 +479,13 @@ public class Lune {
         Task task;
         switch (type) {
             case "T":
-                if (parts.length != 3) {
-                    throw new IllegalArgumentException(
-                            "a todo (T) line needs exactly 3 fields, found " + parts.length);
-                }
-                task = new Todo(description);
+                task = parseSavedTodo(parts, description);
                 break;
             case "D":
-                if (parts.length != 4 || parts[3].isBlank()) {
-                    throw new IllegalArgumentException(
-                            "a deadline (D) line needs exactly 4 fields with a non-empty /by, found "
-                                    + parts.length);
-                }
-                task = new Deadline(description, parseSavedDateTime(parts[3]));
+                task = parseSavedDeadline(parts, description);
                 break;
             case "E":
-                if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
-                    throw new IllegalArgumentException(
-                            "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
-                                    + parts.length);
-                }
-                task = new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
+                task = parseSavedEvent(parts, description);
                 break;
             default:
                 throw new IllegalArgumentException("unknown task type \"" + type + "\"");
@@ -508,6 +494,44 @@ public class Lune {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Builds a Todo from a save-file line's fields (type "T"): exactly 3
+     * fields, with no extra date fields.
+     */
+    private static Task parseSavedTodo(String[] parts, String description) {
+        if (parts.length != 3) {
+            throw new IllegalArgumentException(
+                    "a todo (T) line needs exactly 3 fields, found " + parts.length);
+        }
+        return new Todo(description);
+    }
+
+    /**
+     * Builds a Deadline from a save-file line's fields (type "D"): exactly
+     * 4 fields, with a non-empty /by date/time.
+     */
+    private static Task parseSavedDeadline(String[] parts, String description) {
+        if (parts.length != 4 || parts[3].isBlank()) {
+            throw new IllegalArgumentException(
+                    "a deadline (D) line needs exactly 4 fields with a non-empty /by, found "
+                            + parts.length);
+        }
+        return new Deadline(description, parseSavedDateTime(parts[3]));
+    }
+
+    /**
+     * Builds an Event from a save-file line's fields (type "E"): exactly 5
+     * fields, with non-empty /from and /to date/times.
+     */
+    private static Task parseSavedEvent(String[] parts, String description) {
+        if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
+            throw new IllegalArgumentException(
+                    "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
+                            + parts.length);
+        }
+        return new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
     }
 
     /**
