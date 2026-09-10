@@ -2,6 +2,7 @@ package lune.task;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * Holds the current list of tasks and the operations to add, remove, and
@@ -66,5 +67,12 @@ public class TaskList implements Iterable<Task> {
     @Override
     public Iterator<Task> iterator() {
         return tasks.iterator();
+    }
+
+    /**
+     * Returns a stream over the tasks, in list order.
+     */
+    public Stream<Task> stream() {
+        return tasks.stream();
     }
 }

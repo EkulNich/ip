@@ -8,8 +8,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.IntPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import lune.exception.LuneException;
 import lune.task.Deadline;
@@ -63,12 +67,10 @@ public class Lune {
          */
         static CommandType fromInput(String input) {
             String word = input.contains(" ") ? input.substring(0, input.indexOf(' ')) : input;
-            for (CommandType type : values()) {
-                if (type != UNKNOWN && type.word().equals(word)) {
-                    return type;
-                }
-            }
-            return UNKNOWN;
+            return Arrays.stream(values())
+                    .filter(type -> type != UNKNOWN && type.word().equals(word))
+                    .findFirst()
+                    .orElse(UNKNOWN);
         }
     }
 
@@ -159,11 +161,7 @@ public class Lune {
     private static String processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
             case LIST:
-                StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
-                for (int i = 0; i < tasks.size(); i++) {
-                    listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-                }
-                return listing.toString();
+                return "     Here are the tasks in your list:\n" + formatNumbered(tasks, i -> true);
             case MARK: {
                 int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
                 tasks.get(index).markAsDone();
@@ -244,27 +242,18 @@ public class Lune {
                     throw new LuneException("Uh-oh, tell me which date — try: on <date>");
                 }
                 LocalDate queryDate = parseDateTime("on", text).toLocalDate();
-                StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
-                        + Task.formatDate(queryDate) + ":\n");
-                for (int i = 0; i < tasks.size(); i++) {
-                    if (tasks.get(i).occursOn(queryDate)) {
-                        onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-                    }
-                }
-                return onListing.toString();
+                return "     Here are the deadlines/events on " + Task.formatDate(queryDate) + ":\n"
+                        + formatNumbered(tasks, i -> tasks.get(i).occursOn(queryDate));
             }
             case FIND: {
                 String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
                 if (keyword.isEmpty()) {
                     throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
                 }
-                StringBuilder findListing = new StringBuilder("     Here are the matching tasks in your list:\n");
-                for (int i = 0; i < tasks.size(); i++) {
-                    if (tasks.get(i).getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                        findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-                    }
-                }
-                return findListing.toString();
+                String lowerKeyword = keyword.toLowerCase();
+                IntPredicate matchesKeyword = i -> tasks.get(i).getDescription().toLowerCase()
+                        .contains(lowerKeyword);
+                return "     Here are the matching tasks in your list:\n" + formatNumbered(tasks, matchesKeyword);
             }
             case UNKNOWN:
                 // Fallthrough
@@ -318,6 +307,20 @@ public class Lune {
         }
     }
 
+    /**
+     * Renders every task whose (0-based) position in tasks satisfies
+     * matches, each as "     &lt;n&gt;.&lt;task&gt;\n" numbered by that
+     * original position — not by its position among the matches. Shared by
+     * "list" (matches everything), "on" (matches by date), and "find"
+     * (matches by keyword).
+     */
+    private static String formatNumbered(TaskList tasks, IntPredicate matches) {
+        return IntStream.range(0, tasks.size())
+                .filter(matches)
+                .mapToObj(i -> "     " + (i + 1) + "." + tasks.get(i) + "\n")
+                .collect(Collectors.joining());
+    }
+
     private static String formatAdded(Task task, int taskCount) {
         return "     Got it. I've added this task:\n"
                 + "       " + task + "\n"
@@ -345,13 +348,15 @@ public class Lune {
      * disk always reflects the current in-memory list.
      */
     private static void saveTasks(TaskList tasks) {
-        StringBuilder content = new StringBuilder();
-        for (Task task : tasks) {
-            content.append(task.toSaveFormat()).append("\n");
-        }
+        // Each task contributes its own trailing "\n" (rather than joining
+        // with "\n" as a separator) so an empty task list still produces an
+        // empty string, matching the original loop's behavior exactly.
+        String content = tasks.stream()
+                .map(task -> task.toSaveFormat() + "\n")
+                .collect(Collectors.joining());
         try {
             Files.createDirectories(SAVE_FILE.getParent());
-            Files.writeString(SAVE_FILE, content.toString());
+            Files.writeString(SAVE_FILE, content);
         } catch (IOException e) {
             System.out.println(LINE + "     Uh-oh, I couldn't save your tasks to disk: "
                     + e.getMessage() + "\n" + LINE);
