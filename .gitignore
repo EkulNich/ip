@@ -23,5 +23,8 @@ _temp/
 # Task save file (runtime-generated, not source)
 /data/
 
+# Claude Code project-specific skills/tooling (dev-only, not submission code)
+/.claude/
+
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
