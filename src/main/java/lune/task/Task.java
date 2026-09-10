@@ -24,6 +24,13 @@ public class Task {
      * Creates a new, not-done task with the given description.
      */
     public Task(String description) {
+        // Every current call site (Lune.processCommand for live user input,
+        // Lune.parseSavedTask for the save file) already rejects a
+        // null/blank description before constructing a task, so this
+        // documents that assumption rather than re-validating it — a
+        // violation here would mean a new caller forgot that check, not
+        // that the user typed something bad.
+        assert description != null && !description.isBlank() : "a task's description must never be null or blank";
         this.description = description;
         this.isDone = false;
     }

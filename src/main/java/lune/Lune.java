@@ -356,7 +356,14 @@ public class Lune {
             throw new LuneException("Uh-oh, task " + number + " doesn't exist — "
                     + "you currently have " + taskCount + " task(s).");
         }
-        return number - 1;
+        int index = number - 1;
+        // Bad user input is already rejected above via LuneException; this
+        // documents that the checks above are themselves correct, i.e. any
+        // number that reaches here truly does convert to a valid 0-based
+        // index — a bug here would be in this method's own logic, not the
+        // user's command.
+        assert index >= 0 && index < taskCount : "validated index must be within bounds";
+        return index;
     }
 
     /**
@@ -393,8 +400,15 @@ public class Lune {
     private static String dedent(String message) {
         StringBuilder result = new StringBuilder();
         for (String line : message.split("\n", -1)) {
-            result.append(line.length() >= CONSOLE_INDENT_WIDTH ? line.substring(CONSOLE_INDENT_WIDTH) : line)
-                    .append("\n");
+            // dedent() is only ever called on processCommand()'s successful
+            // return value (getResponse() returns LuneException messages,
+            // which have no such indent, unchanged) — every non-empty line
+            // of that value is built with the fixed 5-space console indent,
+            // so this should always hold. The substring branch below stays
+            // as a safety net in case that construction invariant is ever
+            // broken by a future edit.
+            assert line.isEmpty() || line.length() >= 5 : "processCommand() success messages are always indented";
+            result.append(line.length() >= 5 ? line.substring(5) : line).append("\n");
         }
         return result.toString().strip();
     }
@@ -495,6 +509,11 @@ public class Lune {
             default:
                 throw new IllegalArgumentException("unknown task type \"" + type + "\"");
         }
+        // Every case above either assigns task or throws, so the compiler
+        // already treats task as definitely assigned here; this documents
+        // that invariant explicitly, so it fails loudly if a future case is
+        // ever added that forgets to do either.
+        assert task != null : "every switch case above must assign task or throw";
         if (doneFlag.equals("1")) {
             task.markAsDone();
         }
