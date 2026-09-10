@@ -28,6 +28,10 @@ import lune.task.Todo;
 public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
+    // Every line of a successful command's message (built in the handleX
+    // methods below) is hand-indented by this many spaces, to line up under
+    // LINE in the console; dedent() strips exactly this much back off.
+    private static final int CONSOLE_INDENT_WIDTH = 5;
     private static final Path SAVE_FILE = Path.of("data", "lune.txt");
     // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
@@ -389,7 +393,8 @@ public class Lune {
     private static String dedent(String message) {
         StringBuilder result = new StringBuilder();
         for (String line : message.split("\n", -1)) {
-            result.append(line.length() >= 5 ? line.substring(5) : line).append("\n");
+            result.append(line.length() >= CONSOLE_INDENT_WIDTH ? line.substring(CONSOLE_INDENT_WIDTH) : line)
+                    .append("\n");
         }
         return result.toString().strip();
     }
