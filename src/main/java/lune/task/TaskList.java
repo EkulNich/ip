@@ -43,6 +43,14 @@ public class TaskList implements Iterable<Task> {
      * Removes and returns the task at the given (0-based) index.
      */
     public Task remove(int index) {
+        // TaskList does no bounds validation of its own — every caller in
+        // this codebase (Lune, via parseTaskIndex) is expected to validate
+        // the index against a real user command before calling in, so an
+        // out-of-range index here signals a bug in the caller, not in
+        // TaskList. ArrayList would throw IndexOutOfBoundsException anyway,
+        // but this documents the precondition explicitly, at the point
+        // where it's actually assumed.
+        assert index >= 0 && index < tasks.size() : "index must be within the current task list bounds";
         return tasks.remove(index);
     }
 
@@ -50,6 +58,7 @@ public class TaskList implements Iterable<Task> {
      * Returns the task at the given (0-based) index.
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "index must be within the current task list bounds";
         return tasks.get(index);
     }
 
