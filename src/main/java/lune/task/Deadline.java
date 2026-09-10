@@ -15,6 +15,10 @@ public class Deadline extends Task {
      */
     public Deadline(String description, LocalDateTime by) {
         super(description);
+        // by always comes from Lune.parseDateTime(), which either returns a
+        // real LocalDateTime or throws LuneException — it never returns
+        // null — so every current caller already guarantees this.
+        assert by != null : "a deadline's due date/time must never be null";
         this.by = by;
     }
 
