@@ -159,119 +159,174 @@ public class Lune {
     private static String processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
             case LIST:
-                StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
-                for (int i = 0; i < tasks.size(); i++) {
-                    listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-                }
-                return listing.toString();
-            case MARK: {
-                int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
-                tasks.get(index).markAsDone();
-                return "     Nice! I've marked this task as done:\n"
-                        + "       " + tasks.get(index) + "\n";
-            }
-            case UNMARK: {
-                int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
-                tasks.get(index).markAsUndone();
-                return "     OK, I've marked this task as not done yet:\n"
-                        + "       " + tasks.get(index) + "\n";
-            }
-            case DELETE: {
-                int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
-                Task removed = tasks.remove(index);
-                return "     Noted. I've removed this task:\n"
-                        + "       " + removed + "\n"
-                        + "     Now you have " + tasks.size() + " tasks in the list.\n";
-            }
-            case TODO: {
-                String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
-                if (description.isEmpty()) {
-                    throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
-                }
-                tasks.add(new Todo(description));
-                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
-            }
-            case DEADLINE: {
-                String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
-                int byIndex = rest.indexOf(" /by ");
-                String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
-                if (description.isEmpty()) {
-                    throw new LuneException("Uh-oh, a deadline needs a description — "
-                            + "try: deadline <what to do> /by <date>");
-                }
-                if (byIndex == -1) {
-                    throw new LuneException("Uh-oh, a deadline needs a /by date — "
-                            + "try: deadline " + description + " /by <date>");
-                }
-                String byText = rest.substring(byIndex + " /by ".length()).trim();
-                if (byText.isEmpty()) {
-                    throw new LuneException("Uh-oh, a deadline's /by date can't be empty.");
-                }
-                LocalDateTime by = parseDateTime("/by", byText);
-                tasks.add(new Deadline(description, by));
-                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
-            }
-            case EVENT: {
-                String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
-                int fromIndex = rest.indexOf(" /from ");
-                int toIndex = rest.indexOf(" /to ");
-                String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
-                if (description.isEmpty()) {
-                    throw new LuneException("Uh-oh, an event needs a description — "
-                            + "try: event <what to do> /from <date> /to <date>");
-                }
-                if (fromIndex == -1) {
-                    throw new LuneException("Uh-oh, an event needs a /from date — "
-                            + "try: event " + description + " /from <date> /to <date>");
-                }
-                if (toIndex == -1 || toIndex < fromIndex) {
-                    throw new LuneException("Uh-oh, an event needs a /to date after /from — "
-                            + "try: event " + description + " /from <date> /to <date>");
-                }
-                String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
-                String toText = rest.substring(toIndex + " /to ".length()).trim();
-                if (fromText.isEmpty() || toText.isEmpty()) {
-                    throw new LuneException("Uh-oh, an event's /from and /to dates can't be empty.");
-                }
-                LocalDateTime from = parseDateTime("/from", fromText);
-                LocalDateTime to = parseDateTime("/to", toText);
-                tasks.add(new Event(description, from, to));
-                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
-            }
-            case ON: {
-                String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
-                if (text.isEmpty()) {
-                    throw new LuneException("Uh-oh, tell me which date — try: on <date>");
-                }
-                LocalDate queryDate = parseDateTime("on", text).toLocalDate();
-                StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
-                        + Task.formatDate(queryDate) + ":\n");
-                for (int i = 0; i < tasks.size(); i++) {
-                    if (tasks.get(i).occursOn(queryDate)) {
-                        onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-                    }
-                }
-                return onListing.toString();
-            }
-            case FIND: {
-                String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
-                if (keyword.isEmpty()) {
-                    throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
-                }
-                StringBuilder findListing = new StringBuilder("     Here are the matching tasks in your list:\n");
-                for (int i = 0; i < tasks.size(); i++) {
-                    if (tasks.get(i).getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                        findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
-                    }
-                }
-                return findListing.toString();
-            }
+                return handleList(tasks);
+            case MARK:
+                return handleMark(input, tasks);
+            case UNMARK:
+                return handleUnmark(input, tasks);
+            case DELETE:
+                return handleDelete(input, tasks);
+            case TODO:
+                return handleTodo(input, tasks);
+            case DEADLINE:
+                return handleDeadline(input, tasks);
+            case EVENT:
+                return handleEvent(input, tasks);
+            case ON:
+                return handleOn(input, tasks);
+            case FIND:
+                return handleFind(input, tasks);
             case UNKNOWN:
                 // Fallthrough
             default:
                 throw new LuneException("Uh-oh, I don't recognize that command — "
                         + "try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.");
         }
+    }
+
+    /**
+     * Handles "list": renders every task in the list, numbered.
+     */
+    private static String handleList(TaskList tasks) {
+        StringBuilder listing = new StringBuilder("     Here are the tasks in your list:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            listing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+        }
+        return listing.toString();
+    }
+
+    /**
+     * Handles "mark &lt;n&gt;": marks the given task as done.
+     */
+    private static String handleMark(String input, TaskList tasks) throws LuneException {
+        int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
+        tasks.get(index).markAsDone();
+        return "     Nice! I've marked this task as done:\n"
+                + "       " + tasks.get(index) + "\n";
+    }
+
+    /**
+     * Handles "unmark &lt;n&gt;": marks the given task as not done.
+     */
+    private static String handleUnmark(String input, TaskList tasks) throws LuneException {
+        int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
+        tasks.get(index).markAsUndone();
+        return "     OK, I've marked this task as not done yet:\n"
+                + "       " + tasks.get(index) + "\n";
+    }
+
+    /**
+     * Handles "delete &lt;n&gt;": removes the given task from the list.
+     */
+    private static String handleDelete(String input, TaskList tasks) throws LuneException {
+        int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
+        Task removed = tasks.remove(index);
+        return "     Noted. I've removed this task:\n"
+                + "       " + removed + "\n"
+                + "     Now you have " + tasks.size() + " tasks in the list.\n";
+    }
+
+    /**
+     * Handles "todo &lt;description&gt;": adds a new Todo.
+     */
+    private static String handleTodo(String input, TaskList tasks) throws LuneException {
+        String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
+        if (description.isEmpty()) {
+            throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
+        }
+        tasks.add(new Todo(description));
+        return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
+    }
+
+    /**
+     * Handles "deadline &lt;description&gt; /by &lt;date&gt;": adds a new Deadline.
+     */
+    private static String handleDeadline(String input, TaskList tasks) throws LuneException {
+        String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
+        int byIndex = rest.indexOf(" /by ");
+        String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
+        if (description.isEmpty()) {
+            throw new LuneException("Uh-oh, a deadline needs a description — "
+                    + "try: deadline <what to do> /by <date>");
+        }
+        if (byIndex == -1) {
+            throw new LuneException("Uh-oh, a deadline needs a /by date — "
+                    + "try: deadline " + description + " /by <date>");
+        }
+        String byText = rest.substring(byIndex + " /by ".length()).trim();
+        if (byText.isEmpty()) {
+            throw new LuneException("Uh-oh, a deadline's /by date can't be empty.");
+        }
+        LocalDateTime by = parseDateTime("/by", byText);
+        tasks.add(new Deadline(description, by));
+        return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
+    }
+
+    /**
+     * Handles "event &lt;description&gt; /from &lt;date&gt; /to &lt;date&gt;": adds a new Event.
+     */
+    private static String handleEvent(String input, TaskList tasks) throws LuneException {
+        String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
+        int fromIndex = rest.indexOf(" /from ");
+        int toIndex = rest.indexOf(" /to ");
+        String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
+        if (description.isEmpty()) {
+            throw new LuneException("Uh-oh, an event needs a description — "
+                    + "try: event <what to do> /from <date> /to <date>");
+        }
+        if (fromIndex == -1) {
+            throw new LuneException("Uh-oh, an event needs a /from date — "
+                    + "try: event " + description + " /from <date> /to <date>");
+        }
+        if (toIndex == -1 || toIndex < fromIndex) {
+            throw new LuneException("Uh-oh, an event needs a /to date after /from — "
+                    + "try: event " + description + " /from <date> /to <date>");
+        }
+        String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
+        String toText = rest.substring(toIndex + " /to ".length()).trim();
+        if (fromText.isEmpty() || toText.isEmpty()) {
+            throw new LuneException("Uh-oh, an event's /from and /to dates can't be empty.");
+        }
+        LocalDateTime from = parseDateTime("/from", fromText);
+        LocalDateTime to = parseDateTime("/to", toText);
+        tasks.add(new Event(description, from, to));
+        return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
+    }
+
+    /**
+     * Handles "on &lt;date&gt;": lists every deadline/event occurring on that date.
+     */
+    private static String handleOn(String input, TaskList tasks) throws LuneException {
+        String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
+        if (text.isEmpty()) {
+            throw new LuneException("Uh-oh, tell me which date — try: on <date>");
+        }
+        LocalDate queryDate = parseDateTime("on", text).toLocalDate();
+        StringBuilder onListing = new StringBuilder("     Here are the deadlines/events on "
+                + Task.formatDate(queryDate) + ":\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).occursOn(queryDate)) {
+                onListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+            }
+        }
+        return onListing.toString();
+    }
+
+    /**
+     * Handles "find &lt;keyword&gt;": lists every task whose description contains keyword.
+     */
+    private static String handleFind(String input, TaskList tasks) throws LuneException {
+        String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
+        }
+        StringBuilder findListing = new StringBuilder("     Here are the matching tasks in your list:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                findListing.append("     ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+            }
+        }
+        return findListing.toString();
     }
 
     /**
