@@ -32,6 +32,10 @@ import lune.task.Todo;
 public class Lune {
     private static final String LINE =
             "    ____________________________________________________________\n";
+    // Every line of a successful command's message (built in the handleX
+    // methods below) is hand-indented by this many spaces, to line up under
+    // LINE in the console; dedent() strips exactly this much back off.
+    private static final int CONSOLE_INDENT_WIDTH = 5;
     private static final Path SAVE_FILE = Path.of("data", "lune.txt");
     // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
@@ -286,7 +290,14 @@ public class Lune {
             throw new LuneException("Uh-oh, task " + number + " doesn't exist — "
                     + "you currently have " + taskCount + " task(s).");
         }
-        return number - 1;
+        int index = number - 1;
+        // Bad user input is already rejected above via LuneException; this
+        // documents that the checks above are themselves correct, i.e. any
+        // number that reaches here truly does convert to a valid 0-based
+        // index — a bug here would be in this method's own logic, not the
+        // user's command.
+        assert index >= 0 && index < taskCount : "validated index must be within bounds";
+        return index;
     }
 
     /**
@@ -337,6 +348,14 @@ public class Lune {
     private static String dedent(String message) {
         StringBuilder result = new StringBuilder();
         for (String line : message.split("\n", -1)) {
+            // dedent() is only ever called on processCommand()'s successful
+            // return value (getResponse() returns LuneException messages,
+            // which have no such indent, unchanged) — every non-empty line
+            // of that value is built with the fixed 5-space console indent,
+            // so this should always hold. The substring branch below stays
+            // as a safety net in case that construction invariant is ever
+            // broken by a future edit.
+            assert line.isEmpty() || line.length() >= 5 : "processCommand() success messages are always indented";
             result.append(line.length() >= 5 ? line.substring(5) : line).append("\n");
         }
         return result.toString().strip();
@@ -429,35 +448,64 @@ public class Lune {
         Task task;
         switch (type) {
             case "T":
-                if (parts.length != 3) {
-                    throw new IllegalArgumentException(
-                            "a todo (T) line needs exactly 3 fields, found " + parts.length);
-                }
-                task = new Todo(description);
+                task = parseSavedTodo(parts, description);
                 break;
             case "D":
-                if (parts.length != 4 || parts[3].isBlank()) {
-                    throw new IllegalArgumentException(
-                            "a deadline (D) line needs exactly 4 fields with a non-empty /by, found "
-                                    + parts.length);
-                }
-                task = new Deadline(description, parseSavedDateTime(parts[3]));
+                task = parseSavedDeadline(parts, description);
                 break;
             case "E":
-                if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
-                    throw new IllegalArgumentException(
-                            "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
-                                    + parts.length);
-                }
-                task = new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
+                task = parseSavedEvent(parts, description);
                 break;
             default:
                 throw new IllegalArgumentException("unknown task type \"" + type + "\"");
         }
+        // Every case above either assigns task or throws, so the compiler
+        // already treats task as definitely assigned here; this documents
+        // that invariant explicitly, so it fails loudly if a future case is
+        // ever added that forgets to do either.
+        assert task != null : "every switch case above must assign task or throw";
         if (doneFlag.equals("1")) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Builds a Todo from a save-file line's fields (type "T"): exactly 3
+     * fields, with no extra date fields.
+     */
+    private static Task parseSavedTodo(String[] parts, String description) {
+        if (parts.length != 3) {
+            throw new IllegalArgumentException(
+                    "a todo (T) line needs exactly 3 fields, found " + parts.length);
+        }
+        return new Todo(description);
+    }
+
+    /**
+     * Builds a Deadline from a save-file line's fields (type "D"): exactly
+     * 4 fields, with a non-empty /by date/time.
+     */
+    private static Task parseSavedDeadline(String[] parts, String description) {
+        if (parts.length != 4 || parts[3].isBlank()) {
+            throw new IllegalArgumentException(
+                    "a deadline (D) line needs exactly 4 fields with a non-empty /by, found "
+                            + parts.length);
+        }
+        return new Deadline(description, parseSavedDateTime(parts[3]));
+    }
+
+    /**
+     * Builds an Event from a save-file line's fields (type "E"): exactly 5
+     * fields, with non-empty /from and /to date/times.
+     */
+    private static Task parseSavedEvent(String[] parts, String description) {
+        if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
+            throw new IllegalArgumentException(
+                    "an event (E) line needs exactly 5 fields with non-empty /from and /to, found "
+                            + parts.length);
+        }
+        return new Event(description, parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
     }
 
     /**

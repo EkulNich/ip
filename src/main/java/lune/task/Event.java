@@ -16,6 +16,12 @@ public class Event extends Task {
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
+        // Like Deadline's by, from/to always come from Lune.parseDateTime(),
+        // which never returns null — every current caller already
+        // guarantees this. (Not asserted here: that "to" is chronologically
+        // after "from" — Lune.processCommand doesn't actually check that,
+        // so it would be a false invariant, not a true one.)
+        assert from != null && to != null : "an event's from/to date-times must never be null";
         this.from = from;
         this.to = to;
     }

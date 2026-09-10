@@ -59,6 +59,12 @@ application {
     mainClass = 'lune.gui.Launcher'
 }
 
+// Java disables assert statements by default; enable them here so the
+// assumptions they document are actually checked while developing/testing.
+run {
+    enableAssertions = true
+}
+
 jar {
     // A lean JAR file (i.e., without the dependencies packaged inside) is not needed.
     enabled = false
@@ -79,4 +85,5 @@ tasks.register('runConsole', JavaExec) {
     mainClass = 'lune.Lune'
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
+    enableAssertions = true
 }
