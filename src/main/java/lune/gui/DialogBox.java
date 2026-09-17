@@ -92,6 +92,9 @@ public class DialogBox extends HBox {
             case "delete":
                 dialog.getStyleClass().add("delete-label");
                 break;
+            case "archive":
+                dialog.getStyleClass().add("archive-label");
+                break;
             default:
                 break;
         }

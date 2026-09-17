@@ -79,6 +79,13 @@ public class TaskList implements Iterable<Task> {
     }
 
     /**
+     * Removes every task from the list.
+     */
+    public void clear() {
+        tasks.clear();
+    }
+
+    /**
      * Returns a stream over the tasks, in list order.
      */
     public Stream<Task> stream() {
