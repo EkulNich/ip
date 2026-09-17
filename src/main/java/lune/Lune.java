@@ -181,137 +181,23 @@ public class Lune {
     static String processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
             case LIST:
-                return "     Here's what you've got going on:\n" + formatNumbered(tasks, i -> true);
-            case MARK: {
-                int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
-                tasks.get(index).markAsDone();
-                return "     Oh, satisfying. Marked as done:\n"
-                        + "       " + tasks.get(index) + "\n";
-            }
-            case UNMARK: {
-                int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
-                tasks.get(index).markAsUndone();
-                return "     Fair enough, back to not-done:\n"
-                        + "       " + tasks.get(index) + "\n";
-            }
-            case DELETE: {
-                int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
-                Task removed = tasks.remove(index);
-                return "     Poof. Gone:\n"
-                        + "       " + removed + "\n"
-                        + "     That's " + tasks.size() + " task(s) on the board now.\n";
-            }
-            case TODO: {
-                String description = input.startsWith("todo ")
-                        ? collapseWhitespace(input.substring("todo ".length())) : "";
-                if (description.isEmpty()) {
-                    throw new LuneException("Ugh, a todo needs a description... try: todo <what to do>");
-                }
-                if (description.contains(" | ")) {
-                    throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
-                            + "differently.");
-                }
-                if (isDuplicateDescription(tasks, Todo.class, description)) {
-                    throw new LuneException("Ugh, you already have a todo like that: " + description);
-                }
-                tasks.add(new Todo(description));
-                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
-            }
-            case DEADLINE: {
-                String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
-                int byIndex = rest.indexOf(" /by ");
-                String description = collapseWhitespace(byIndex == -1 ? rest : rest.substring(0, byIndex));
-                if (description.isEmpty()) {
-                    throw new LuneException("Ugh, a deadline needs a description... "
-                            + "try: deadline <what to do> /by <date>");
-                }
-                if (byIndex == -1) {
-                    throw new LuneException("*sigh* — a deadline needs a /by date... "
-                            + "try: deadline " + description + " /by <date>");
-                }
-                if (description.contains(" | ")) {
-                    throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
-                            + "differently.");
-                }
-                if (isDuplicateDescription(tasks, Deadline.class, description)) {
-                    throw new LuneException("Ugh, you already have a deadline like that: " + description);
-                }
-                if (rest.indexOf(" /by ", byIndex + 1) != -1) {
-                    throw new LuneException("Ugh, you specified /by more than once... "
-                            + "try: deadline <what to do> /by <date>");
-                }
-                String byText = collapseWhitespace(rest.substring(byIndex + " /by ".length()));
-                if (byText.isEmpty()) {
-                    throw new LuneException("Ugh, a deadline's /by date can't be empty.");
-                }
-                LocalDateTime by = parseDateTime("/by", byText);
-                tasks.add(new Deadline(description, by));
-                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
-            }
-            case EVENT: {
-                String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
-                int fromIndex = rest.indexOf(" /from ");
-                int toIndex = rest.indexOf(" /to ");
-                String description = collapseWhitespace(fromIndex == -1 ? rest : rest.substring(0, fromIndex));
-                if (description.isEmpty()) {
-                    throw new LuneException("Ugh, an event needs a description... "
-                            + "try: event <what to do> /from <date> /to <date>");
-                }
-                if (fromIndex == -1) {
-                    throw new LuneException("*sigh* — an event needs a /from date... "
-                            + "try: event " + description + " /from <date> /to <date>");
-                }
-                if (toIndex == -1 || toIndex < fromIndex) {
-                    throw new LuneException("Mm, an event needs a /to date after /from... "
-                            + "try: event " + description + " /from <date> /to <date>");
-                }
-                if (description.contains(" | ")) {
-                    throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
-                            + "differently.");
-                }
-                if (isDuplicateDescription(tasks, Event.class, description)) {
-                    throw new LuneException("Ugh, you already have an event like that: " + description);
-                }
-                if (rest.indexOf(" /from ", fromIndex + 1) != -1) {
-                    throw new LuneException("Ugh, you specified /from more than once... "
-                            + "try: event <what to do> /from <date> /to <date>");
-                }
-                if (rest.indexOf(" /to ", toIndex + 1) != -1) {
-                    throw new LuneException("Ugh, you specified /to more than once... "
-                            + "try: event <what to do> /from <date> /to <date>");
-                }
-                String fromText = collapseWhitespace(rest.substring(fromIndex + " /from ".length(), toIndex));
-                String toText = collapseWhitespace(rest.substring(toIndex + " /to ".length()));
-                if (fromText.isEmpty() || toText.isEmpty()) {
-                    throw new LuneException("Ugh, an event's /from and /to dates can't be empty.");
-                }
-                LocalDateTime from = parseDateTime("/from", fromText);
-                LocalDateTime to = parseDateTime("/to", toText);
-                if (to.isBefore(from)) {
-                    throw new LuneException("Ugh, an event's /to can't be before its /from...");
-                }
-                tasks.add(new Event(description, from, to));
-                return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
-            }
-            case ON: {
-                String text = input.equals("on") ? "" : collapseWhitespace(input.substring("on ".length()));
-                if (text.isEmpty()) {
-                    throw new LuneException("Ugh, tell me which date... try: on <date>");
-                }
-                LocalDate queryDate = parseDateTime("on", text).toLocalDate();
-                return "     Here's what's happening on " + Task.formatDate(queryDate) + ":\n"
-                        + formatNumbered(tasks, i -> tasks.get(i).occursOn(queryDate));
-            }
-            case FIND: {
-                String keyword = input.equals("find") ? "" : collapseWhitespace(input.substring("find ".length()));
-                if (keyword.isEmpty()) {
-                    throw new LuneException("Ugh, tell me what to search for... try: find <keyword>");
-                }
-                String lowerKeyword = keyword.toLowerCase();
-                IntPredicate matchesKeyword = i -> tasks.get(i).getDescription().toLowerCase()
-                        .contains(lowerKeyword);
-                return "     Here's what matched your search:\n" + formatNumbered(tasks, matchesKeyword);
-            }
+                return handleList(tasks);
+            case MARK:
+                return handleMark(input, tasks);
+            case UNMARK:
+                return handleUnmark(input, tasks);
+            case DELETE:
+                return handleDelete(input, tasks);
+            case TODO:
+                return handleTodo(input, tasks);
+            case DEADLINE:
+                return handleDeadline(input, tasks);
+            case EVENT:
+                return handleEvent(input, tasks);
+            case ON:
+                return handleOn(input, tasks);
+            case FIND:
+                return handleFind(input, tasks);
             case ARCHIVE:
                 return archiveTasks(tasks);
             case UNKNOWN:
@@ -320,6 +206,185 @@ public class Lune {
                 throw new LuneException("*sigh* I don't recognize that command... try todo, deadline, event, "
                         + "list, mark, unmark, delete, on, find, archive, or bye.");
         }
+    }
+
+    /**
+     * Handles "list": renders every task in the list, numbered.
+     */
+    private static String handleList(TaskList tasks) {
+        return "     Here's what you've got going on:\n" + formatNumbered(tasks, i -> true);
+    }
+
+    /**
+     * Handles "mark &lt;n&gt;": marks the given task as done.
+     */
+    private static String handleMark(String input, TaskList tasks) throws LuneException {
+        int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
+        tasks.get(index).markAsDone();
+        return "     Oh, satisfying. Marked as done:\n"
+                + "       " + tasks.get(index) + "\n";
+    }
+
+    /**
+     * Handles "unmark &lt;n&gt;": marks the given task as not done.
+     */
+    private static String handleUnmark(String input, TaskList tasks) throws LuneException {
+        int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
+        tasks.get(index).markAsUndone();
+        return "     Fair enough, back to not-done:\n"
+                + "       " + tasks.get(index) + "\n";
+    }
+
+    /**
+     * Handles "delete &lt;n&gt;": removes the given task from the list.
+     */
+    private static String handleDelete(String input, TaskList tasks) throws LuneException {
+        int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
+        Task removed = tasks.remove(index);
+        return "     Poof. Gone:\n"
+                + "       " + removed + "\n"
+                + "     That's " + tasks.size() + " task(s) on the board now.\n";
+    }
+
+    /**
+     * Handles "todo &lt;description&gt;": adds a new Todo, after validating
+     * the description is non-empty, contains no save-format delimiter, and
+     * isn't a duplicate of an existing todo.
+     */
+    private static String handleTodo(String input, TaskList tasks) throws LuneException {
+        String description = input.startsWith("todo ")
+                ? collapseWhitespace(input.substring("todo ".length())) : "";
+        if (description.isEmpty()) {
+            throw new LuneException("Ugh, a todo needs a description... try: todo <what to do>");
+        }
+        if (description.contains(" | ")) {
+            throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
+                    + "differently.");
+        }
+        if (isDuplicateDescription(tasks, Todo.class, description)) {
+            throw new LuneException("Ugh, you already have a todo like that: " + description);
+        }
+        tasks.add(new Todo(description));
+        return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
+    }
+
+    /**
+     * Handles "deadline &lt;description&gt; /by &lt;date&gt;": adds a new
+     * Deadline, after the same description validation as handleTodo(), plus
+     * checks specific to the /by clause (present, not duplicated, non-empty,
+     * a valid date/time).
+     */
+    private static String handleDeadline(String input, TaskList tasks) throws LuneException {
+        String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
+        int byIndex = rest.indexOf(" /by ");
+        String description = collapseWhitespace(byIndex == -1 ? rest : rest.substring(0, byIndex));
+        if (description.isEmpty()) {
+            throw new LuneException("Ugh, a deadline needs a description... "
+                    + "try: deadline <what to do> /by <date>");
+        }
+        if (byIndex == -1) {
+            throw new LuneException("*sigh* — a deadline needs a /by date... "
+                    + "try: deadline " + description + " /by <date>");
+        }
+        if (description.contains(" | ")) {
+            throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
+                    + "differently.");
+        }
+        if (isDuplicateDescription(tasks, Deadline.class, description)) {
+            throw new LuneException("Ugh, you already have a deadline like that: " + description);
+        }
+        if (rest.indexOf(" /by ", byIndex + 1) != -1) {
+            throw new LuneException("Ugh, you specified /by more than once... "
+                    + "try: deadline <what to do> /by <date>");
+        }
+        String byText = collapseWhitespace(rest.substring(byIndex + " /by ".length()));
+        if (byText.isEmpty()) {
+            throw new LuneException("Ugh, a deadline's /by date can't be empty.");
+        }
+        LocalDateTime by = parseDateTime("/by", byText);
+        tasks.add(new Deadline(description, by));
+        return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
+    }
+
+    /**
+     * Handles "event &lt;description&gt; /from &lt;date&gt; /to &lt;date&gt;":
+     * adds a new Event, after the same description validation as
+     * handleTodo(), plus checks specific to /from and /to (present, not
+     * duplicated, non-empty, valid dates/times, and /to not before /from).
+     */
+    private static String handleEvent(String input, TaskList tasks) throws LuneException {
+        String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
+        int fromIndex = rest.indexOf(" /from ");
+        int toIndex = rest.indexOf(" /to ");
+        String description = collapseWhitespace(fromIndex == -1 ? rest : rest.substring(0, fromIndex));
+        if (description.isEmpty()) {
+            throw new LuneException("Ugh, an event needs a description... "
+                    + "try: event <what to do> /from <date> /to <date>");
+        }
+        if (fromIndex == -1) {
+            throw new LuneException("*sigh* — an event needs a /from date... "
+                    + "try: event " + description + " /from <date> /to <date>");
+        }
+        if (toIndex == -1 || toIndex < fromIndex) {
+            throw new LuneException("Mm, an event needs a /to date after /from... "
+                    + "try: event " + description + " /from <date> /to <date>");
+        }
+        if (description.contains(" | ")) {
+            throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
+                    + "differently.");
+        }
+        if (isDuplicateDescription(tasks, Event.class, description)) {
+            throw new LuneException("Ugh, you already have an event like that: " + description);
+        }
+        if (rest.indexOf(" /from ", fromIndex + 1) != -1) {
+            throw new LuneException("Ugh, you specified /from more than once... "
+                    + "try: event <what to do> /from <date> /to <date>");
+        }
+        if (rest.indexOf(" /to ", toIndex + 1) != -1) {
+            throw new LuneException("Ugh, you specified /to more than once... "
+                    + "try: event <what to do> /from <date> /to <date>");
+        }
+        String fromText = collapseWhitespace(rest.substring(fromIndex + " /from ".length(), toIndex));
+        String toText = collapseWhitespace(rest.substring(toIndex + " /to ".length()));
+        if (fromText.isEmpty() || toText.isEmpty()) {
+            throw new LuneException("Ugh, an event's /from and /to dates can't be empty.");
+        }
+        LocalDateTime from = parseDateTime("/from", fromText);
+        LocalDateTime to = parseDateTime("/to", toText);
+        if (to.isBefore(from)) {
+            throw new LuneException("Ugh, an event's /to can't be before its /from...");
+        }
+        tasks.add(new Event(description, from, to));
+        return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
+    }
+
+    /**
+     * Handles "on &lt;date&gt;": lists every deadline/event occurring on
+     * that date.
+     */
+    private static String handleOn(String input, TaskList tasks) throws LuneException {
+        String text = input.equals("on") ? "" : collapseWhitespace(input.substring("on ".length()));
+        if (text.isEmpty()) {
+            throw new LuneException("Ugh, tell me which date... try: on <date>");
+        }
+        LocalDate queryDate = parseDateTime("on", text).toLocalDate();
+        return "     Here's what's happening on " + Task.formatDate(queryDate) + ":\n"
+                + formatNumbered(tasks, i -> tasks.get(i).occursOn(queryDate));
+    }
+
+    /**
+     * Handles "find &lt;keyword&gt;": lists every task whose description
+     * contains keyword (case-insensitive).
+     */
+    private static String handleFind(String input, TaskList tasks) throws LuneException {
+        String keyword = input.equals("find") ? "" : collapseWhitespace(input.substring("find ".length()));
+        if (keyword.isEmpty()) {
+            throw new LuneException("Ugh, tell me what to search for... try: find <keyword>");
+        }
+        String lowerKeyword = keyword.toLowerCase();
+        IntPredicate matchesKeyword = i -> tasks.get(i).getDescription().toLowerCase()
+                .contains(lowerKeyword);
+        return "     Here's what matched your search:\n" + formatNumbered(tasks, matchesKeyword);
     }
 
     /**
