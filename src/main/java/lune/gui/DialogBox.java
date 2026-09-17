@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 /**
  * A single chat message bubble: a Label holding the message text next to
@@ -36,6 +37,12 @@ public class DialogBox extends HBox {
         }
         dialog.setText(text);
         displayPicture.setImage(image);
+        // Crop the avatar to a circle rather than showing its raw rectangle
+        // — the classic chat-app look, and it hides the fact the source
+        // photos aren't uniformly framed. Sized from the ImageView's own
+        // FXML-configured fitWidth/fitHeight rather than a hardcoded value.
+        double radius = Math.min(displayPicture.getFitWidth(), displayPicture.getFitHeight()) / 2;
+        displayPicture.setClip(new Circle(radius, radius, radius));
     }
 
     /**
