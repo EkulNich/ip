@@ -16,6 +16,7 @@ import lune.exception.LuneException;
 import lune.task.Deadline;
 import lune.task.Event;
 import lune.task.Task;
+import lune.task.TaskList;
 import lune.task.Todo;
 
 /**
@@ -139,6 +140,65 @@ public class LuneTest {
     @Test
     public void parseDateTime_emptyText_exceptionThrown() {
         assertThrows(LuneException.class, () -> Lune.parseDateTime("/by", ""));
+    }
+
+    @Test
+    public void parseDateTime_nonExistentSlashDate_exceptionThrown() {
+        // Before the STRICT resolver fix, "30/2/2019" would silently parse
+        // as Feb 28 2019 instead of being rejected.
+        assertThrows(LuneException.class, () -> Lune.parseDateTime("/by", "30/2/2019 1800"));
+    }
+
+    // --- collapseWhitespace ---
+
+    @Test
+    public void collapseWhitespace_internalRunOfSpaces_collapsedToOne() {
+        assertEquals("read book", Lune.collapseWhitespace("read   book"));
+    }
+
+    @Test
+    public void collapseWhitespace_leadingAndTrailingSpaces_stripped() {
+        assertEquals("read book", Lune.collapseWhitespace("  read book  "));
+    }
+
+    @Test
+    public void collapseWhitespace_alreadySingleSpaced_unchanged() {
+        assertEquals("read book", Lune.collapseWhitespace("read book"));
+    }
+
+    // --- isDuplicateDescription ---
+
+    @Test
+    public void isDuplicateDescription_sameTypeSameDescription_trueReturned() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        assertTrue(Lune.isDuplicateDescription(tasks, Todo.class, "read book"));
+    }
+
+    @Test
+    public void isDuplicateDescription_sameTypeDifferentCase_trueReturned() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Read Book"));
+        assertTrue(Lune.isDuplicateDescription(tasks, Todo.class, "read book"));
+    }
+
+    @Test
+    public void isDuplicateDescription_differentType_falseReturned() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        assertFalse(Lune.isDuplicateDescription(tasks, Deadline.class, "read book"));
+    }
+
+    @Test
+    public void isDuplicateDescription_sameTypeDifferentDescription_falseReturned() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        assertFalse(Lune.isDuplicateDescription(tasks, Todo.class, "buy milk"));
+    }
+
+    @Test
+    public void isDuplicateDescription_emptyList_falseReturned() {
+        assertFalse(Lune.isDuplicateDescription(new TaskList(), Todo.class, "read book"));
     }
 
     // --- parseSavedTask ---

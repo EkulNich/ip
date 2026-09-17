@@ -2233,3 +2233,262 @@ bye
 ```file:data/archive.txt
 (file not found)
 ```
+
+## Test Case 28: Leading/trailing/extra whitespace is tolerated
+
+**Aim:** Verify a command works the same whether or not it's surrounded by extra whitespace, or has extra internal whitespace between words in its description — including `bye` itself.
+
+**Input:**
+```input
+  todo read   book  
+   list
+bye  
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Added. One more thing to think about:
+       [T][ ] read book
+     That's 1 task(s) on the board now.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+     1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+## Test Case 29: A repeated /by or /from is rejected with a specific error
+
+**Aim:** Verify specifying the same parameter twice (e.g. two `/by` clauses) produces a clear "specified more than once" error, instead of the confusing "invalid date" error that would result from the second occurrence being swallowed into the date text.
+
+**Input:**
+```input
+deadline return book /by 2019-01-01 /by 2019-02-01
+event meeting /from 2019-01-01 /from 2019-01-02 /to 2019-01-03
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, you specified /by more than once... try: deadline <what to do> /by <date>
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, you specified /from more than once... try: event <what to do> /from <date> /to <date>
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+## Test Case 30: An event's /to can't be before /from, but can equal it
+
+**Aim:** Verify an event whose /to is chronologically before /from is rejected, while an event whose /to equals /from (a single-day event) is still accepted — this is a regression guard for that existing, separately-tested feature.
+
+**Input:**
+```input
+event meeting /from 2019-10-15 /to 2019-10-10
+event standup /from 2019-10-15 /to 2019-10-15
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, an event's /to can't be before its /from...
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Added. One more thing to think about:
+       [E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
+     That's 1 task(s) on the board now.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+     1.[E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+## Test Case 31: Adding a duplicate task is rejected, scoped by type
+
+**Aim:** Verify adding a second todo with the same description (any case) is rejected, but a deadline with that same description is not considered a duplicate of it, since duplicate detection is scoped per task type.
+
+**Input:**
+```input
+todo read book
+todo Read Book
+deadline read book /by 2019-10-15
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Added. One more thing to think about:
+       [T][ ] read book
+     That's 1 task(s) on the board now.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, you already have a todo like that: Read Book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Added. One more thing to think about:
+       [D][ ] read book (by: Oct 15 2019)
+     That's 2 task(s) on the board now.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+     1.[T][ ] read book
+     2.[D][ ] read book (by: Oct 15 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+## Test Case 32: A description containing the save-file delimiter is rejected
+
+**Aim:** Verify a description containing the literal `" | "` save-file delimiter is rejected up front, rather than being silently accepted and corrupting the save file (the previous, documented behavior).
+
+**Input:**
+```input
+todo read | book
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, a description can't contain " | "... try phrasing it differently.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+## Test Case 33: Non-existent dates are rejected in both accepted formats
+
+**Aim:** Verify a non-existent calendar date (Feb 30) is rejected whether given in `yyyy-mm-dd` or `d/m/yyyy HHmm` form, rather than being silently normalized to a nearby valid date.
+
+**Input:**
+```input
+deadline return book /by 2019-02-30
+deadline return book /by 30/2/2019 1800
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, "2019-02-30" isn't a valid /by date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Ugh, "30/2/2019 1800" isn't a valid /by date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
