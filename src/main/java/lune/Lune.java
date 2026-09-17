@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +42,10 @@ public class Lune {
     private static final Path ARCHIVE_FILE = Path.of("data", "archive.txt");
     // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
-    private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+    // "uuuu" (proleptic year), not "yyyy" (year-of-era) — STRICT resolution
+    // can't resolve a year-of-era without an explicit era in the input.
+    private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("d/M/uuuu HHmm").withResolverStyle(ResolverStyle.STRICT);
     // Display format for an archive session's timestamp header, e.g.
     // "Sep 10 2026, 2:30 PM".
     private static final DateTimeFormatter ARCHIVE_TIMESTAMP_FORMAT =
@@ -116,7 +120,7 @@ public class Lune {
         // NoSuchElementException once stdin is exhausted.
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().strip();
             if (input.equals("bye")) {
                 break;
             }
@@ -137,7 +141,8 @@ public class Lune {
      * console loop in main() (processCommand()), but returns plain text
      * instead of the console's line-separator/indent-prefixed formatting.
      */
-    public String getResponse(String input) {
+    public String getResponse(String rawInput) {
+        String input = rawInput.strip();
         if (input.equals("bye")) {
             lastCommandType = CommandType.UNKNOWN;
             return "Bye! Go forth and be marginally more organized.";
@@ -193,9 +198,17 @@ public class Lune {
                         + "     That's " + tasks.size() + " task(s) on the board now.\n";
             }
             case TODO: {
-                String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
+                String description = input.startsWith("todo ")
+                        ? collapseWhitespace(input.substring("todo ".length())) : "";
                 if (description.isEmpty()) {
                     throw new LuneException("Ugh, a todo needs a description... try: todo <what to do>");
+                }
+                if (description.contains(" | ")) {
+                    throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
+                            + "differently.");
+                }
+                if (isDuplicateDescription(tasks, Todo.class, description)) {
+                    throw new LuneException("Ugh, you already have a todo like that: " + description);
                 }
                 tasks.add(new Todo(description));
                 return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
@@ -203,7 +216,7 @@ public class Lune {
             case DEADLINE: {
                 String rest = input.startsWith("deadline ") ? input.substring("deadline ".length()) : "";
                 int byIndex = rest.indexOf(" /by ");
-                String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
+                String description = collapseWhitespace(byIndex == -1 ? rest : rest.substring(0, byIndex));
                 if (description.isEmpty()) {
                     throw new LuneException("Ugh, a deadline needs a description... "
                             + "try: deadline <what to do> /by <date>");
@@ -212,7 +225,18 @@ public class Lune {
                     throw new LuneException("*sigh* — a deadline needs a /by date... "
                             + "try: deadline " + description + " /by <date>");
                 }
-                String byText = rest.substring(byIndex + " /by ".length()).trim();
+                if (description.contains(" | ")) {
+                    throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
+                            + "differently.");
+                }
+                if (isDuplicateDescription(tasks, Deadline.class, description)) {
+                    throw new LuneException("Ugh, you already have a deadline like that: " + description);
+                }
+                if (rest.indexOf(" /by ", byIndex + 1) != -1) {
+                    throw new LuneException("Ugh, you specified /by more than once... "
+                            + "try: deadline <what to do> /by <date>");
+                }
+                String byText = collapseWhitespace(rest.substring(byIndex + " /by ".length()));
                 if (byText.isEmpty()) {
                     throw new LuneException("Ugh, a deadline's /by date can't be empty.");
                 }
@@ -224,7 +248,7 @@ public class Lune {
                 String rest = input.startsWith("event ") ? input.substring("event ".length()) : "";
                 int fromIndex = rest.indexOf(" /from ");
                 int toIndex = rest.indexOf(" /to ");
-                String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
+                String description = collapseWhitespace(fromIndex == -1 ? rest : rest.substring(0, fromIndex));
                 if (description.isEmpty()) {
                     throw new LuneException("Ugh, an event needs a description... "
                             + "try: event <what to do> /from <date> /to <date>");
@@ -237,18 +261,36 @@ public class Lune {
                     throw new LuneException("Mm, an event needs a /to date after /from... "
                             + "try: event " + description + " /from <date> /to <date>");
                 }
-                String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
-                String toText = rest.substring(toIndex + " /to ".length()).trim();
+                if (description.contains(" | ")) {
+                    throw new LuneException("Ugh, a description can't contain \" | \"... try phrasing it "
+                            + "differently.");
+                }
+                if (isDuplicateDescription(tasks, Event.class, description)) {
+                    throw new LuneException("Ugh, you already have an event like that: " + description);
+                }
+                if (rest.indexOf(" /from ", fromIndex + 1) != -1) {
+                    throw new LuneException("Ugh, you specified /from more than once... "
+                            + "try: event <what to do> /from <date> /to <date>");
+                }
+                if (rest.indexOf(" /to ", toIndex + 1) != -1) {
+                    throw new LuneException("Ugh, you specified /to more than once... "
+                            + "try: event <what to do> /from <date> /to <date>");
+                }
+                String fromText = collapseWhitespace(rest.substring(fromIndex + " /from ".length(), toIndex));
+                String toText = collapseWhitespace(rest.substring(toIndex + " /to ".length()));
                 if (fromText.isEmpty() || toText.isEmpty()) {
                     throw new LuneException("Ugh, an event's /from and /to dates can't be empty.");
                 }
                 LocalDateTime from = parseDateTime("/from", fromText);
                 LocalDateTime to = parseDateTime("/to", toText);
+                if (to.isBefore(from)) {
+                    throw new LuneException("Ugh, an event's /to can't be before its /from...");
+                }
                 tasks.add(new Event(description, from, to));
                 return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
             }
             case ON: {
-                String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
+                String text = input.equals("on") ? "" : collapseWhitespace(input.substring("on ".length()));
                 if (text.isEmpty()) {
                     throw new LuneException("Ugh, tell me which date... try: on <date>");
                 }
@@ -257,7 +299,7 @@ public class Lune {
                         + formatNumbered(tasks, i -> tasks.get(i).occursOn(queryDate));
             }
             case FIND: {
-                String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
+                String keyword = input.equals("find") ? "" : collapseWhitespace(input.substring("find ".length()));
                 if (keyword.isEmpty()) {
                     throw new LuneException("Ugh, tell me what to search for... try: find <keyword>");
                 }
@@ -373,6 +415,26 @@ public class Lune {
         return IntStream.range(0, tasks.size())
                 .mapToObj(i -> (i + 1) + "." + tasks.get(i) + "\n")
                 .collect(Collectors.joining());
+    }
+
+    /**
+     * Collapses any run of whitespace in text down to a single space, and
+     * strips leading/trailing whitespace. Applied to every free-text field
+     * (descriptions, date text) so "read   book" and "read book" are the
+     * same input, and so extra spacing around a date's time component
+     * (e.g. "2/12/2019   1800") doesn't stop it from parsing.
+     */
+    static String collapseWhitespace(String text) {
+        return text.strip().replaceAll("\\s+", " ");
+    }
+
+    /**
+     * Returns whether tasks already contains a task of exactly the same
+     * type as type with the same description (case-insensitive). Used to
+     * reject adding an accidental duplicate.
+     */
+    static boolean isDuplicateDescription(TaskList tasks, Class<? extends Task> type, String description) {
+        return tasks.stream().anyMatch(t -> t.getClass() == type && t.getDescription().equalsIgnoreCase(description));
     }
 
     private static String formatAdded(Task task, int taskCount) {
