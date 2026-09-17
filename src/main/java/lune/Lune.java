@@ -3,6 +3,7 @@ package lune;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,9 +38,14 @@ public class Lune {
     // LINE in the console; dedent() strips exactly this much back off.
     private static final int CONSOLE_INDENT_WIDTH = 5;
     private static final Path SAVE_FILE = Path.of("data", "lune.txt");
+    private static final Path ARCHIVE_FILE = Path.of("data", "archive.txt");
     // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+    // Display format for an archive session's timestamp header, e.g.
+    // "Sep 10 2026, 2:30 PM".
+    private static final DateTimeFormatter ARCHIVE_TIMESTAMP_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mm a");
 
     private final TaskList tasks;
     private CommandType lastCommandType = CommandType.UNKNOWN;
@@ -54,7 +60,7 @@ public class Lune {
      * exercise fromInput() directly.
      */
     enum CommandType {
-        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, FIND, UNKNOWN;
+        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, ON, FIND, ARCHIVE, UNKNOWN;
 
         /**
          * Returns this command's literal word as typed by the user, e.g.
@@ -97,7 +103,8 @@ public class Lune {
                 + "|_____\\__,_|_| |_|\\___|\n";
         System.out.println(banner);
 
-        System.out.println(LINE + "     Hello! I'm Lune\n     What can I do for you?\n" + LINE);
+        System.out.println(LINE + "     Oh, hey — I'm Lune.\n     What's rattling around in that head of yours?\n"
+                + LINE);
 
         // TaskList grows as needed, so there's no fixed task limit to enforce.
         TaskList tasks = new TaskList(loadTasks());
@@ -121,7 +128,7 @@ public class Lune {
                 System.out.println(LINE + "     " + e.getMessage() + "\n" + LINE);
             }
         }
-        System.out.println(LINE + "     Bye. Hope to see you again soon!\n" + LINE);
+        System.out.println(LINE + "     Bye! Go forth and be marginally more organized.\n" + LINE);
     }
 
     /**
@@ -133,7 +140,7 @@ public class Lune {
     public String getResponse(String input) {
         if (input.equals("bye")) {
             lastCommandType = CommandType.UNKNOWN;
-            return "Bye. Hope to see you again soon!";
+            return "Bye! Go forth and be marginally more organized.";
         }
         lastCommandType = CommandType.fromInput(input);
         try {
@@ -165,30 +172,30 @@ public class Lune {
     private static String processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
             case LIST:
-                return "     Here are the tasks in your list:\n" + formatNumbered(tasks, i -> true);
+                return "     Here's what you've got going on:\n" + formatNumbered(tasks, i -> true);
             case MARK: {
                 int index = parseTaskIndex(input, CommandType.MARK, tasks.size());
                 tasks.get(index).markAsDone();
-                return "     Nice! I've marked this task as done:\n"
+                return "     Oh, satisfying. Marked as done:\n"
                         + "       " + tasks.get(index) + "\n";
             }
             case UNMARK: {
                 int index = parseTaskIndex(input, CommandType.UNMARK, tasks.size());
                 tasks.get(index).markAsUndone();
-                return "     OK, I've marked this task as not done yet:\n"
+                return "     Fair enough, back to not-done:\n"
                         + "       " + tasks.get(index) + "\n";
             }
             case DELETE: {
                 int index = parseTaskIndex(input, CommandType.DELETE, tasks.size());
                 Task removed = tasks.remove(index);
-                return "     Noted. I've removed this task:\n"
+                return "     Poof. Gone:\n"
                         + "       " + removed + "\n"
-                        + "     Now you have " + tasks.size() + " tasks in the list.\n";
+                        + "     That's " + tasks.size() + " task(s) on the board now.\n";
             }
             case TODO: {
                 String description = input.startsWith("todo ") ? input.substring("todo ".length()).trim() : "";
                 if (description.isEmpty()) {
-                    throw new LuneException("Uh-oh, a todo needs a description — try: todo <what to do>");
+                    throw new LuneException("Ugh, a todo needs a description... try: todo <what to do>");
                 }
                 tasks.add(new Todo(description));
                 return formatAdded(tasks.get(tasks.size() - 1), tasks.size());
@@ -198,16 +205,16 @@ public class Lune {
                 int byIndex = rest.indexOf(" /by ");
                 String description = (byIndex == -1 ? rest : rest.substring(0, byIndex)).trim();
                 if (description.isEmpty()) {
-                    throw new LuneException("Uh-oh, a deadline needs a description — "
+                    throw new LuneException("Ugh, a deadline needs a description... "
                             + "try: deadline <what to do> /by <date>");
                 }
                 if (byIndex == -1) {
-                    throw new LuneException("Uh-oh, a deadline needs a /by date — "
+                    throw new LuneException("*sigh* — a deadline needs a /by date... "
                             + "try: deadline " + description + " /by <date>");
                 }
                 String byText = rest.substring(byIndex + " /by ".length()).trim();
                 if (byText.isEmpty()) {
-                    throw new LuneException("Uh-oh, a deadline's /by date can't be empty.");
+                    throw new LuneException("Ugh, a deadline's /by date can't be empty.");
                 }
                 LocalDateTime by = parseDateTime("/by", byText);
                 tasks.add(new Deadline(description, by));
@@ -219,21 +226,21 @@ public class Lune {
                 int toIndex = rest.indexOf(" /to ");
                 String description = (fromIndex == -1 ? rest : rest.substring(0, fromIndex)).trim();
                 if (description.isEmpty()) {
-                    throw new LuneException("Uh-oh, an event needs a description — "
+                    throw new LuneException("Ugh, an event needs a description... "
                             + "try: event <what to do> /from <date> /to <date>");
                 }
                 if (fromIndex == -1) {
-                    throw new LuneException("Uh-oh, an event needs a /from date — "
+                    throw new LuneException("*sigh* — an event needs a /from date... "
                             + "try: event " + description + " /from <date> /to <date>");
                 }
                 if (toIndex == -1 || toIndex < fromIndex) {
-                    throw new LuneException("Uh-oh, an event needs a /to date after /from — "
+                    throw new LuneException("Mm, an event needs a /to date after /from... "
                             + "try: event " + description + " /from <date> /to <date>");
                 }
                 String fromText = rest.substring(fromIndex + " /from ".length(), toIndex).trim();
                 String toText = rest.substring(toIndex + " /to ".length()).trim();
                 if (fromText.isEmpty() || toText.isEmpty()) {
-                    throw new LuneException("Uh-oh, an event's /from and /to dates can't be empty.");
+                    throw new LuneException("Ugh, an event's /from and /to dates can't be empty.");
                 }
                 LocalDateTime from = parseDateTime("/from", fromText);
                 LocalDateTime to = parseDateTime("/to", toText);
@@ -243,27 +250,29 @@ public class Lune {
             case ON: {
                 String text = input.equals("on") ? "" : input.substring("on ".length()).trim();
                 if (text.isEmpty()) {
-                    throw new LuneException("Uh-oh, tell me which date — try: on <date>");
+                    throw new LuneException("Ugh, tell me which date... try: on <date>");
                 }
                 LocalDate queryDate = parseDateTime("on", text).toLocalDate();
-                return "     Here are the deadlines/events on " + Task.formatDate(queryDate) + ":\n"
+                return "     Here's what's happening on " + Task.formatDate(queryDate) + ":\n"
                         + formatNumbered(tasks, i -> tasks.get(i).occursOn(queryDate));
             }
             case FIND: {
                 String keyword = input.equals("find") ? "" : input.substring("find ".length()).trim();
                 if (keyword.isEmpty()) {
-                    throw new LuneException("Uh-oh, tell me what to search for — try: find <keyword>");
+                    throw new LuneException("Ugh, tell me what to search for... try: find <keyword>");
                 }
                 String lowerKeyword = keyword.toLowerCase();
                 IntPredicate matchesKeyword = i -> tasks.get(i).getDescription().toLowerCase()
                         .contains(lowerKeyword);
-                return "     Here are the matching tasks in your list:\n" + formatNumbered(tasks, matchesKeyword);
+                return "     Here's what matched your search:\n" + formatNumbered(tasks, matchesKeyword);
             }
+            case ARCHIVE:
+                return archiveTasks(tasks);
             case UNKNOWN:
                 // Fallthrough
             default:
-                throw new LuneException("Uh-oh, I don't recognize that command — "
-                        + "try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.");
+                throw new LuneException("*sigh* I don't recognize that command... try todo, deadline, event, "
+                        + "list, mark, unmark, delete, on, find, archive, or bye.");
         }
     }
 
@@ -277,17 +286,17 @@ public class Lune {
         String commandWord = command.word();
         String arg = input.equals(commandWord) ? "" : input.substring(commandWord.length() + 1).trim();
         if (arg.isEmpty()) {
-            throw new LuneException("Uh-oh, which task number should I " + commandWord
+            throw new LuneException("Ugh, which task number should I " + commandWord
                     + "? Try: " + commandWord + " 2");
         }
         int number;
         try {
             number = Integer.parseInt(arg);
         } catch (NumberFormatException e) {
-            throw new LuneException("Uh-oh, \"" + arg + "\" doesn't look like a task number.");
+            throw new LuneException("Mm, \"" + arg + "\" doesn't look like a task number.");
         }
         if (number < 1 || number > taskCount) {
-            throw new LuneException("Uh-oh, task " + number + " doesn't exist — "
+            throw new LuneException("Ugh, task " + number + " doesn't exist... "
                     + "you currently have " + taskCount + " task(s).");
         }
         int index = number - 1;
@@ -312,8 +321,8 @@ public class Lune {
             try {
                 return LocalDateTime.parse(text, SLASH_DATE_TIME_FORMAT);
             } catch (DateTimeParseException slashFailure) {
-                throw new LuneException("Uh-oh, \"" + text + "\" isn't a valid " + label
-                        + " date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).");
+                throw new LuneException("Ugh, \"" + text + "\" isn't a valid " + label
+                        + " date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).");
             }
         }
     }
@@ -332,10 +341,44 @@ public class Lune {
                 .collect(Collectors.joining());
     }
 
+    /**
+     * Handles "archive": appends every current task, as a timestamped,
+     * human-readable record, to ARCHIVE_FILE, then clears the list so the
+     * user can start fresh. Writes nothing to ARCHIVE_FILE when the list is
+     * already empty — there's nothing meaningful to record.
+     */
+    private static String archiveTasks(TaskList tasks) {
+        int archivedCount = tasks.size();
+        if (archivedCount > 0) {
+            String session = "Archived on " + LocalDateTime.now().format(ARCHIVE_TIMESTAMP_FORMAT) + ":\n"
+                    + formatArchiveEntry(tasks) + "\n";
+            try {
+                Files.createDirectories(ARCHIVE_FILE.getParent());
+                Files.writeString(ARCHIVE_FILE, session, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                return "     Ugh, I couldn't write to the archive file: " + e.getMessage() + "\n";
+            }
+            tasks.clear();
+        }
+        return "     Archived " + archivedCount + " task(s) to " + ARCHIVE_FILE + ".\n"
+                + "     Ah, a blank slate. Delightful.\n";
+    }
+
+    /**
+     * Renders every task as "&lt;n&gt;.&lt;task&gt;\n", numbered from 1, for
+     * ARCHIVE_FILE — a plain record on disk, so unlike formatNumbered() this
+     * has no console-specific indent to line up under LINE.
+     */
+    private static String formatArchiveEntry(TaskList tasks) {
+        return IntStream.range(0, tasks.size())
+                .mapToObj(i -> (i + 1) + "." + tasks.get(i) + "\n")
+                .collect(Collectors.joining());
+    }
+
     private static String formatAdded(Task task, int taskCount) {
-        return "     Got it. I've added this task:\n"
+        return "     Added. One more thing to think about:\n"
                 + "       " + task + "\n"
-                + "     Now you have " + taskCount + " tasks in the list.\n";
+                + "     That's " + taskCount + " task(s) on the board now.\n";
     }
 
     /**
@@ -377,7 +420,7 @@ public class Lune {
             Files.createDirectories(SAVE_FILE.getParent());
             Files.writeString(SAVE_FILE, content);
         } catch (IOException e) {
-            System.out.println(LINE + "     Uh-oh, I couldn't save your tasks to disk: "
+            System.out.println(LINE + "     Ugh, I couldn't save your tasks to disk: "
                     + e.getMessage() + "\n" + LINE);
         }
     }
@@ -404,8 +447,8 @@ public class Lune {
         try {
             lines = Files.readAllLines(SAVE_FILE);
         } catch (IOException e) {
-            System.out.println(LINE + "     Uh-oh, I couldn't read " + SAVE_FILE + " ("
-                    + e.getMessage() + ") — starting with an empty list.\n" + LINE);
+            System.out.println(LINE + "     Ugh, I couldn't read " + SAVE_FILE + " ("
+                    + e.getMessage() + ")... starting with an empty list.\n" + LINE);
             return tasks;
         }
         for (int i = 0; i < lines.size(); i++) {
@@ -416,7 +459,7 @@ public class Lune {
             try {
                 tasks.add(parseSavedTask(line));
             } catch (IllegalArgumentException e) {
-                System.out.println(LINE + "     Uh-oh, skipping unreadable line " + (i + 1)
+                System.out.println(LINE + "     Ugh, skipping unreadable line " + (i + 1)
                         + " in " + SAVE_FILE + ": " + e.getMessage() + "\n" + LINE);
             }
         }

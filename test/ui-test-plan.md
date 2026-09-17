@@ -23,12 +23,12 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -52,23 +52,23 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -92,23 +92,23 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] return book (by: Oct 15 2019)
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -132,23 +132,23 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [E][ ] project meeting (from: Oct 16 2019 to: Oct 18 2019)
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[E][ ] project meeting (from: Oct 16 2019 to: Oct 18 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -175,38 +175,38 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Fair enough, back to not-done:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -236,52 +236,52 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
-     Now you have 3 tasks in the list.
+     That's 3 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] join sports club
-     Now you have 4 tasks in the list.
+     That's 4 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] join sports club
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] borrow book
-     Now you have 5 tasks in the list.
+     That's 5 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][X] read book
      2.[D][ ] return book (by: Jun 06 2019)
      3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
@@ -290,7 +290,7 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -317,35 +317,35 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, a todo needs a description — try: todo <what to do>
+     Ugh, a todo needs a description... try: todo <what to do>
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, a deadline needs a description — try: deadline <what to do> /by <date>
+     Ugh, a deadline needs a description... try: deadline <what to do> /by <date>
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, an event needs a description — try: event <what to do> /from <date> /to <date>
+     Ugh, an event needs a description... try: event <what to do> /from <date> /to <date>
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -371,34 +371,34 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, a deadline needs a /by date — try: deadline return book /by <date>
+     *sigh* — a deadline needs a /by date... try: deadline return book /by <date>
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
      2.[D][ ] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -423,27 +423,27 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, an event needs a /to date after /from — try: event meeting /from <date> /to <date>
+     Mm, an event needs a /to date after /from... try: event meeting /from <date> /to <date>
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [E][ ] meeting (from: Jun 06 2019 to: Jun 08 2019)
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[E][ ] meeting (from: Jun 06 2019 to: Jun 08 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -472,44 +472,44 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 1 doesn't exist — you currently have 0 task(s).
+     Ugh, task 1 doesn't exist... you currently have 0 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 0 doesn't exist — you currently have 1 task(s).
+     Ugh, task 0 doesn't exist... you currently have 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 5 doesn't exist — you currently have 1 task(s).
+     Ugh, task 5 doesn't exist... you currently have 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "abc" doesn't look like a task number.
+     Mm, "abc" doesn't look like a task number.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -537,43 +537,43 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, I don't recognize that command — try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.
+     *sigh* I don't recognize that command... try todo, deadline, event, list, mark, unmark, delete, on, find, archive, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, I don't recognize that command — try todo, deadline, event, list, mark, unmark, delete, on, find, or bye.
+     *sigh* I don't recognize that command... try todo, deadline, event, list, mark, unmark, delete, on, find, archive, or bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] return book
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
      2.[T][ ] return book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -703,657 +703,657 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task1
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task2
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task3
-     Now you have 3 tasks in the list.
+     That's 3 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task4
-     Now you have 4 tasks in the list.
+     That's 4 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task5
-     Now you have 5 tasks in the list.
+     That's 5 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task6
-     Now you have 6 tasks in the list.
+     That's 6 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task7
-     Now you have 7 tasks in the list.
+     That's 7 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task8
-     Now you have 8 tasks in the list.
+     That's 8 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task9
-     Now you have 9 tasks in the list.
+     That's 9 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task10
-     Now you have 10 tasks in the list.
+     That's 10 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task11
-     Now you have 11 tasks in the list.
+     That's 11 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task12
-     Now you have 12 tasks in the list.
+     That's 12 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task13
-     Now you have 13 tasks in the list.
+     That's 13 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task14
-     Now you have 14 tasks in the list.
+     That's 14 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task15
-     Now you have 15 tasks in the list.
+     That's 15 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task16
-     Now you have 16 tasks in the list.
+     That's 16 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task17
-     Now you have 17 tasks in the list.
+     That's 17 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task18
-     Now you have 18 tasks in the list.
+     That's 18 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task19
-     Now you have 19 tasks in the list.
+     That's 19 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task20
-     Now you have 20 tasks in the list.
+     That's 20 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task21
-     Now you have 21 tasks in the list.
+     That's 21 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task22
-     Now you have 22 tasks in the list.
+     That's 22 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task23
-     Now you have 23 tasks in the list.
+     That's 23 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task24
-     Now you have 24 tasks in the list.
+     That's 24 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task25
-     Now you have 25 tasks in the list.
+     That's 25 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task26
-     Now you have 26 tasks in the list.
+     That's 26 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task27
-     Now you have 27 tasks in the list.
+     That's 27 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task28
-     Now you have 28 tasks in the list.
+     That's 28 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task29
-     Now you have 29 tasks in the list.
+     That's 29 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task30
-     Now you have 30 tasks in the list.
+     That's 30 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task31
-     Now you have 31 tasks in the list.
+     That's 31 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task32
-     Now you have 32 tasks in the list.
+     That's 32 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task33
-     Now you have 33 tasks in the list.
+     That's 33 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task34
-     Now you have 34 tasks in the list.
+     That's 34 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task35
-     Now you have 35 tasks in the list.
+     That's 35 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task36
-     Now you have 36 tasks in the list.
+     That's 36 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task37
-     Now you have 37 tasks in the list.
+     That's 37 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task38
-     Now you have 38 tasks in the list.
+     That's 38 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task39
-     Now you have 39 tasks in the list.
+     That's 39 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task40
-     Now you have 40 tasks in the list.
+     That's 40 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task41
-     Now you have 41 tasks in the list.
+     That's 41 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task42
-     Now you have 42 tasks in the list.
+     That's 42 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task43
-     Now you have 43 tasks in the list.
+     That's 43 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task44
-     Now you have 44 tasks in the list.
+     That's 44 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task45
-     Now you have 45 tasks in the list.
+     That's 45 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task46
-     Now you have 46 tasks in the list.
+     That's 46 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task47
-     Now you have 47 tasks in the list.
+     That's 47 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task48
-     Now you have 48 tasks in the list.
+     That's 48 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task49
-     Now you have 49 tasks in the list.
+     That's 49 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task50
-     Now you have 50 tasks in the list.
+     That's 50 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task51
-     Now you have 51 tasks in the list.
+     That's 51 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task52
-     Now you have 52 tasks in the list.
+     That's 52 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task53
-     Now you have 53 tasks in the list.
+     That's 53 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task54
-     Now you have 54 tasks in the list.
+     That's 54 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task55
-     Now you have 55 tasks in the list.
+     That's 55 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task56
-     Now you have 56 tasks in the list.
+     That's 56 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task57
-     Now you have 57 tasks in the list.
+     That's 57 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task58
-     Now you have 58 tasks in the list.
+     That's 58 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task59
-     Now you have 59 tasks in the list.
+     That's 59 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task60
-     Now you have 60 tasks in the list.
+     That's 60 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task61
-     Now you have 61 tasks in the list.
+     That's 61 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task62
-     Now you have 62 tasks in the list.
+     That's 62 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task63
-     Now you have 63 tasks in the list.
+     That's 63 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task64
-     Now you have 64 tasks in the list.
+     That's 64 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task65
-     Now you have 65 tasks in the list.
+     That's 65 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task66
-     Now you have 66 tasks in the list.
+     That's 66 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task67
-     Now you have 67 tasks in the list.
+     That's 67 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task68
-     Now you have 68 tasks in the list.
+     That's 68 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task69
-     Now you have 69 tasks in the list.
+     That's 69 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task70
-     Now you have 70 tasks in the list.
+     That's 70 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task71
-     Now you have 71 tasks in the list.
+     That's 71 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task72
-     Now you have 72 tasks in the list.
+     That's 72 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task73
-     Now you have 73 tasks in the list.
+     That's 73 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task74
-     Now you have 74 tasks in the list.
+     That's 74 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task75
-     Now you have 75 tasks in the list.
+     That's 75 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task76
-     Now you have 76 tasks in the list.
+     That's 76 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task77
-     Now you have 77 tasks in the list.
+     That's 77 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task78
-     Now you have 78 tasks in the list.
+     That's 78 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task79
-     Now you have 79 tasks in the list.
+     That's 79 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task80
-     Now you have 80 tasks in the list.
+     That's 80 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task81
-     Now you have 81 tasks in the list.
+     That's 81 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task82
-     Now you have 82 tasks in the list.
+     That's 82 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task83
-     Now you have 83 tasks in the list.
+     That's 83 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task84
-     Now you have 84 tasks in the list.
+     That's 84 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task85
-     Now you have 85 tasks in the list.
+     That's 85 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task86
-     Now you have 86 tasks in the list.
+     That's 86 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task87
-     Now you have 87 tasks in the list.
+     That's 87 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task88
-     Now you have 88 tasks in the list.
+     That's 88 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task89
-     Now you have 89 tasks in the list.
+     That's 89 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task90
-     Now you have 90 tasks in the list.
+     That's 90 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task91
-     Now you have 91 tasks in the list.
+     That's 91 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task92
-     Now you have 92 tasks in the list.
+     That's 92 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task93
-     Now you have 93 tasks in the list.
+     That's 93 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task94
-     Now you have 94 tasks in the list.
+     That's 94 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task95
-     Now you have 95 tasks in the list.
+     That's 95 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task96
-     Now you have 96 tasks in the list.
+     That's 96 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task97
-     Now you have 97 tasks in the list.
+     That's 97 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task98
-     Now you have 98 tasks in the list.
+     That's 98 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task99
-     Now you have 99 tasks in the list.
+     That's 99 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task100
-     Now you have 100 tasks in the list.
+     That's 100 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task101
-     Now you have 101 tasks in the list.
+     That's 101 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task102
-     Now you have 102 tasks in the list.
+     That's 102 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task103
-     Now you have 103 tasks in the list.
+     That's 103 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task104
-     Now you have 104 tasks in the list.
+     That's 104 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] task105
-     Now you have 105 tasks in the list.
+     That's 105 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] task105
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Poof. Gone:
        [T][X] task105
-     Now you have 104 tasks in the list.
+     That's 104 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 105 doesn't exist — you currently have 104 task(s).
+     Ugh, task 105 doesn't exist... you currently have 104 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1383,49 +1383,49 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 1 doesn't exist — you currently have 0 task(s).
+     Ugh, task 1 doesn't exist... you currently have 0 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 0 doesn't exist — you currently have 1 task(s).
+     Ugh, task 0 doesn't exist... you currently have 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 5 doesn't exist — you currently have 1 task(s).
+     Ugh, task 5 doesn't exist... you currently have 1 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "abc" doesn't look like a task number.
+     Mm, "abc" doesn't look like a task number.
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Fair enough, back to not-done:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1457,61 +1457,61 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 1 doesn't exist — you currently have 0 task(s).
+     Ugh, task 1 doesn't exist... you currently have 0 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] return book
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 0 doesn't exist — you currently have 2 task(s).
+     Ugh, task 0 doesn't exist... you currently have 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, task 5 doesn't exist — you currently have 2 task(s).
+     Ugh, task 5 doesn't exist... you currently have 2 task(s).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "abc" doesn't look like a task number.
+     Mm, "abc" doesn't look like a task number.
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Poof. Gone:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] return book
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Poof. Gone:
        [T][ ] return book
-     Now you have 0 tasks in the list.
+     That's 0 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1540,52 +1540,52 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
-     Now you have 3 tasks in the list.
+     That's 3 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] join sports club
-     Now you have 4 tasks in the list.
+     That's 4 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] join sports club
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Poof. Gone:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 3 tasks in the list.
+     That's 3 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1625,12 +1625,12 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][X] read book
      2.[D][ ] return book (by: Jun 06 2019)
      3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
@@ -1638,12 +1638,12 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     Fair enough, back to not-done:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
      2.[D][ ] return book (by: Jun 06 2019)
      3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 08 2019)
@@ -1651,7 +1651,7 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1679,20 +1679,20 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, skipping unreadable line 1 in data/lune.txt: expected at least 3 fields (type | done | description), found 1
+     Ugh, skipping unreadable line 1 in data/lune.txt: expected at least 3 fields (type | done | description), found 1
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1727,35 +1727,35 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, skipping unreadable line 2 in data/lune.txt: expected at least 3 fields (type | done | description), found 1
+     Ugh, skipping unreadable line 2 in data/lune.txt: expected at least 3 fields (type | done | description), found 1
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, skipping unreadable line 4 in data/lune.txt: unknown task type "X"
+     Ugh, skipping unreadable line 4 in data/lune.txt: unknown task type "X"
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, skipping unreadable line 5 in data/lune.txt: an event (E) line needs exactly 5 fields with non-empty /from and /to, found 4
+     Ugh, skipping unreadable line 5 in data/lune.txt: an event (E) line needs exactly 5 fields with non-empty /from and /to, found 4
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, skipping unreadable line 6 in data/lune.txt: done flag must be "0" or "1", found "2"
+     Ugh, skipping unreadable line 6 in data/lune.txt: done flag must be "0" or "1", found "2"
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][X] read book
      2.[D][ ] return book (by: Jun 06 2019)
      3.[T][X] join sports club
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1778,23 +1778,23 @@ list
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1821,35 +1821,35 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "not-a-date" isn't a valid /by date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+     Ugh, "not-a-date" isn't a valid /by date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "2019-13-45" isn't a valid /from date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+     Ugh, "2019-13-45" isn't a valid /from date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "nonsense" isn't a valid /to date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+     Ugh, "nonsense" isn't a valid /to date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] pay rent (by: Oct 20 2019)
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[D][ ] pay rent (by: Oct 20 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1879,22 +1879,22 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, skipping unreadable line 2 in data/lune.txt: "not-a-date" isn't a valid saved date/time
+     Ugh, skipping unreadable line 2 in data/lune.txt: "not-a-date" isn't a valid saved date/time
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[T][X] read book
      2.[T][X] join sports club
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1919,30 +1919,30 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] return book (by: Dec 02 2019, 6:00 pm)
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [E][ ] team meeting (from: Dec 02 2019, 9:00 am to: Dec 02 2019, 10:30 am)
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Here's what you've got going on:
      1.[D][ ] return book (by: Dec 02 2019, 6:00 pm)
      2.[E][ ] team meeting (from: Dec 02 2019, 9:00 am to: Dec 02 2019, 10:30 am)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -1970,46 +1970,46 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] pack bags
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] pay rent (by: Dec 02 2019)
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [E][ ] conference (from: Dec 01 2019 to: Dec 05 2019)
-     Now you have 3 tasks in the list.
+     That's 3 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] submit report (by: Dec 10 2019)
-     Now you have 4 tasks in the list.
+     That's 4 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines/events on Dec 02 2019:
+     Here's what's happening on Dec 02 2019:
      2.[D][ ] pay rent (by: Dec 02 2019)
      3.[E][ ] conference (from: Dec 01 2019 to: Dec 05 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines/events on Dec 11 2019:
+     Here's what's happening on Dec 11 2019:
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -2035,30 +2035,30 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, tell me which date — try: on <date>
+     Ugh, tell me which date... try: on <date>
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, "not-a-date" isn't a valid on date/time — use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
+     Ugh, "not-a-date" isn't a valid on date/time... use yyyy-mm-dd (e.g. 2019-10-15) or d/m/yyyy HHmm (e.g. 2/12/2019 1800).
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] pack bags
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the deadlines/events on Dec 02 2019:
+     Here's what's happening on Dec 02 2019:
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
 ```
 
@@ -2089,59 +2089,147 @@ bye
 |_____\__,_|_| |_|\___|
 
     ____________________________________________________________
-     Hello! I'm Lune
-     What can I do for you?
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     That's 1 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [D][ ] return book (by: Jun 06 2019)
-     Now you have 2 tasks in the list.
+     That's 2 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Oh, satisfying. Marked as done:
        [D][X] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Added. One more thing to think about:
        [T][ ] buy milk
-     Now you have 3 tasks in the list.
+     That's 3 task(s) on the board now.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     Here's what matched your search:
      1.[T][X] read book
      2.[D][X] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     Here's what matched your search:
      1.[T][X] read book
      2.[D][X] return book (by: Jun 06 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     Here's what matched your search:
     ____________________________________________________________
 
     ____________________________________________________________
-     Uh-oh, tell me what to search for — try: find <keyword>
+     Ugh, tell me what to search for... try: find <keyword>
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Bye! Go forth and be marginally more organized.
     ____________________________________________________________
+```
+
+## Test Case 26: "archive" records all tasks to a file and clears the list
+
+**Aim:** Verify "archive" writes every current task to `data/archive.txt` as a human-readable record, then clears the active list — confirmed by both the confirmation message and a subsequent "list" showing nothing, and by `data/lune.txt` being empty afterward.
+
+**Given file:**
+```given-file:data/lune.txt
+T | 1 | read book
+D | 0 | return book | 2019-06-06T00:00
+```
+
+**Input:**
+```input
+archive
+list
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Archived 2 task(s) to data/archive.txt.
+     Ah, a blank slate. Delightful.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here's what you've got going on:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+**Expected file (`data/lune.txt`):**
+```file:data/lune.txt
+```
+
+Note: `data/archive.txt`'s exact content isn't asserted here — it includes a "Archived on <current date/time>" timestamp header, which isn't reproducible run-to-run.
+
+## Test Case 27: "archive" with an empty list writes no archive file
+
+**Aim:** Verify "archive" on an empty list succeeds gracefully (no error) and reports 0 tasks archived, and — since there's nothing meaningful to record — doesn't create `data/archive.txt` at all.
+
+**Input:**
+```input
+archive
+bye
+```
+
+**Expected output:**
+```expected
+ _                     
+| |   _   _ _ __   ___ 
+| |  | | | | '_ \ / _ \
+| |__| |_| | | | |  __/
+|_____\__,_|_| |_|\___|
+
+    ____________________________________________________________
+     Oh, hey — I'm Lune.
+     What's rattling around in that head of yours?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Archived 0 task(s) to data/archive.txt.
+     Ah, a blank slate. Delightful.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye! Go forth and be marginally more organized.
+    ____________________________________________________________
+```
+
+**Expected file (`data/archive.txt`):**
+```file:data/archive.txt
+(file not found)
 ```
