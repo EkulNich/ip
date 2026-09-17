@@ -21,12 +21,12 @@ import lune.task.Todo;
 
 /**
  * Tests the highest-value logic in Lune: command dispatch (CommandType),
- * task-index validation, date/time parsing, and save-file line parsing.
- * These carry almost all the branching/edge-case handling in the program,
- * so they're prioritized over TaskList's one-line delegates or Todo's
- * two-line overrides. main()/processCommand() are intentionally left to
- * the console-level test-ui suite — they're mostly println-driven
- * orchestration rather than logic with a return value to assert on.
+ * task-index validation, date/time parsing, save-file line parsing, and
+ * processCommand() itself (every case except ARCHIVE, which performs
+ * real file I/O and is left to the console-level test-ui suite). main()
+ * and getResponse() are themselves left untested here — they're thin
+ * orchestration around processCommand() plus real file I/O (saveTasks),
+ * exercised end-to-end by the console suite instead.
  */
 public class LuneTest {
 
@@ -302,5 +302,306 @@ public class LuneTest {
         // LocalDateTime.parse requires the "T<time>" part; a bare date isn't
         // enough, unlike parseDateTime()'s more lenient user-input parsing.
         assertThrows(IllegalArgumentException.class, () -> Lune.parseSavedDateTime("2019-12-02"));
+    }
+
+    // --- processCommand: list ---
+
+    @Test
+    public void processCommandList_emptyList_headerOnlyNoItems() throws LuneException {
+        TaskList tasks = new TaskList();
+        String result = Lune.processCommand("list", tasks);
+        assertTrue(result.contains("Here's what you've got going on:"));
+        assertFalse(result.contains("1."));
+    }
+
+    @Test
+    public void processCommandList_withTasks_numberedListingShown() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Todo("buy milk"));
+        String result = Lune.processCommand("list", tasks);
+        assertTrue(result.contains("1.[T][ ] read book"));
+        assertTrue(result.contains("2.[T][ ] buy milk"));
+    }
+
+    // --- processCommand: mark/unmark ---
+
+    @Test
+    public void processCommandMark_validIndex_taskMarkedDone() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        Lune.processCommand("mark 1", tasks);
+        assertEquals("X", tasks.get(0).getStatusIcon());
+    }
+
+    @Test
+    public void processCommandMark_invalidIndex_exceptionThrownTaskListUnchanged() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        assertThrows(LuneException.class, () -> Lune.processCommand("mark 5", tasks));
+        assertEquals(" ", tasks.get(0).getStatusIcon());
+    }
+
+    @Test
+    public void processCommandUnmark_validIndex_taskMarkedNotDone() throws LuneException {
+        TaskList tasks = new TaskList();
+        Todo todo = new Todo("read book");
+        todo.markAsDone();
+        tasks.add(todo);
+        Lune.processCommand("unmark 1", tasks);
+        assertEquals(" ", tasks.get(0).getStatusIcon());
+    }
+
+    // --- processCommand: delete ---
+
+    @Test
+    public void processCommandDelete_validIndex_taskRemoved() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        Lune.processCommand("delete 1", tasks);
+        assertEquals(0, tasks.size());
+    }
+
+    @Test
+    public void processCommandDelete_invalidIndex_exceptionThrownListUnchanged() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        assertThrows(LuneException.class, () -> Lune.processCommand("delete 5", tasks));
+        assertEquals(1, tasks.size());
+    }
+
+    // --- processCommand: todo ---
+
+    @Test
+    public void processCommandTodo_validDescription_taskAdded() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("todo read book", tasks);
+        assertEquals(1, tasks.size());
+        assertEquals("read book", tasks.get(0).getDescription());
+        assertInstanceOf(Todo.class, tasks.get(0));
+    }
+
+    @Test
+    public void processCommandTodo_emptyDescription_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("todo", tasks));
+    }
+
+    @Test
+    public void processCommandTodo_whitespaceCollapsedInStoredDescription() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("todo read   book", tasks);
+        assertEquals("read book", tasks.get(0).getDescription());
+    }
+
+    @Test
+    public void processCommandTodo_descriptionContainsDelimiter_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("todo read | book", tasks));
+    }
+
+    @Test
+    public void processCommandTodo_duplicateDescriptionAnyCase_exceptionThrown() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("todo read book", tasks);
+        assertThrows(LuneException.class, () -> Lune.processCommand("todo Read Book", tasks));
+    }
+
+    @Test
+    public void processCommandTodo_sameDescriptionDifferentType_notADuplicate() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("todo read book", tasks);
+        Lune.processCommand("deadline read book /by 2019-10-15", tasks);
+        assertEquals(2, tasks.size());
+    }
+
+    // --- processCommand: deadline ---
+
+    @Test
+    public void processCommandDeadline_valid_taskAddedWithCorrectDate() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("deadline return book /by 2019-10-15", tasks);
+        assertEquals(1, tasks.size());
+        assertInstanceOf(Deadline.class, tasks.get(0));
+        assertTrue(tasks.get(0).occursOn(LocalDate.of(2019, 10, 15)));
+    }
+
+    @Test
+    public void processCommandDeadline_emptyDescription_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        // Two spaces after "deadline" so the (empty) description before
+        // " /by " is genuinely blank, exercising that branch specifically
+        // rather than the missing-/by branch.
+        assertThrows(LuneException.class, () -> Lune.processCommand("deadline  /by 2019-10-15", tasks));
+    }
+
+    @Test
+    public void processCommandDeadline_missingBy_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("deadline return book", tasks));
+    }
+
+    @Test
+    public void processCommandDeadline_emptyByText_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("deadline return book /by ", tasks));
+    }
+
+    @Test
+    public void processCommandDeadline_repeatedBy_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("deadline return book /by 2019-01-01 /by 2019-02-01", tasks));
+    }
+
+    @Test
+    public void processCommandDeadline_nonExistentDate_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("deadline return book /by 2019-02-30", tasks));
+    }
+
+    @Test
+    public void processCommandDeadline_duplicateDescription_exceptionThrown() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("deadline return book /by 2019-10-15", tasks);
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("deadline return book /by 2019-11-20", tasks));
+    }
+
+    // --- processCommand: event ---
+
+    @Test
+    public void processCommandEvent_valid_taskAddedWithCorrectRange() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("event meeting /from 2019-10-15 /to 2019-10-17", tasks);
+        assertEquals(1, tasks.size());
+        assertInstanceOf(Event.class, tasks.get(0));
+        assertTrue(tasks.get(0).occursOn(LocalDate.of(2019, 10, 16)));
+    }
+
+    @Test
+    public void processCommandEvent_emptyDescription_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("event  /from 2019-10-15 /to 2019-10-17", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_missingFrom_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("event meeting /to 2019-10-17", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_missingTo_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("event meeting /from 2019-10-15", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_repeatedFrom_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("event meeting /from 2019-10-15 /from 2019-10-16 /to 2019-10-17", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_repeatedTo_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("event meeting /from 2019-10-15 /to 2019-10-17 /to 2019-10-18", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_toBeforeFrom_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("event meeting /from 2019-10-15 /to 2019-10-10", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_toEqualsFrom_stillAccepted() throws LuneException {
+        // Regression guard: a single-day event (from == to) must remain
+        // valid — only a to strictly before from should be rejected.
+        TaskList tasks = new TaskList();
+        Lune.processCommand("event standup /from 2019-10-15 /to 2019-10-15", tasks);
+        assertEquals(1, tasks.size());
+    }
+
+    @Test
+    public void processCommandEvent_duplicateDescription_exceptionThrown() throws LuneException {
+        TaskList tasks = new TaskList();
+        Lune.processCommand("event meeting /from 2019-10-15 /to 2019-10-17", tasks);
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("event meeting /from 2019-11-01 /to 2019-11-02", tasks));
+    }
+
+    @Test
+    public void processCommandEvent_descriptionContainsDelimiter_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () ->
+                Lune.processCommand("event a | b /from 2019-10-15 /to 2019-10-17", tasks));
+    }
+
+    // --- processCommand: on ---
+
+    @Test
+    public void processCommandOn_matchingDate_taskListed() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Deadline("return book", LocalDateTime.of(2019, 10, 15, 0, 0)));
+        String result = Lune.processCommand("on 2019-10-15", tasks);
+        assertTrue(result.contains("return book"));
+    }
+
+    @Test
+    public void processCommandOn_noMatchingDate_emptyListing() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Deadline("return book", LocalDateTime.of(2019, 10, 15, 0, 0)));
+        String result = Lune.processCommand("on 2019-10-20", tasks);
+        assertFalse(result.contains("return book"));
+    }
+
+    @Test
+    public void processCommandOn_missingDate_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("on", tasks));
+    }
+
+    @Test
+    public void processCommandOn_invalidDate_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("on not-a-date", tasks));
+    }
+
+    // --- processCommand: find ---
+
+    @Test
+    public void processCommandFind_matchingKeyword_caseInsensitive() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Read Book"));
+        String result = Lune.processCommand("find book", tasks);
+        assertTrue(result.contains("Read Book"));
+    }
+
+    @Test
+    public void processCommandFind_noMatch_emptyListing() throws LuneException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        String result = Lune.processCommand("find xyz", tasks);
+        assertFalse(result.contains("read book"));
+    }
+
+    @Test
+    public void processCommandFind_missingKeyword_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("find", tasks));
+    }
+
+    // --- processCommand: unknown ---
+
+    @Test
+    public void processCommand_unrecognizedCommand_exceptionThrown() {
+        TaskList tasks = new TaskList();
+        assertThrows(LuneException.class, () -> Lune.processCommand("blah", tasks));
     }
 }

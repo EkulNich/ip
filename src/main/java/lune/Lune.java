@@ -173,8 +173,12 @@ public class Lune {
      * the way main() prints it). Throws LuneException, with a message
      * meant to be shown to the user as-is, for any command Lune can't
      * carry out.
+     *
+     * <p>Package-private (not private) so LuneTest can exercise it
+     * directly, for every case except ARCHIVE — that one performs real
+     * file I/O and is covered by the console-level test-ui suite instead.</p>
      */
-    private static String processCommand(String input, TaskList tasks) throws LuneException {
+    static String processCommand(String input, TaskList tasks) throws LuneException {
         switch (CommandType.fromInput(input)) {
             case LIST:
                 return "     Here's what you've got going on:\n" + formatNumbered(tasks, i -> true);
