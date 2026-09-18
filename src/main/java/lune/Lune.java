@@ -1,6 +1,8 @@
 package lune;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -40,6 +42,11 @@ public class Lune {
     private static final int CONSOLE_INDENT_WIDTH = 5;
     private static final Path SAVE_FILE = Path.of("data", "lune.txt");
     private static final Path ARCHIVE_FILE = Path.of("data", "archive.txt");
+    // Path's own toString() uses the OS's native separator (e.g. backslash
+    // on Windows), which is accurate but makes messages look different
+    // across OSes — this fixed, forward-slash form is for display only;
+    // ARCHIVE_FILE itself is still what's actually used for file I/O.
+    private static final String ARCHIVE_FILE_DISPLAY = "data/archive.txt";
     // Accepted alongside plain "yyyy-mm-dd" (tried first, via LocalDate.parse):
     // a date with a time attached, e.g. "2/12/2019 1800" for 6pm on 2 Dec 2019.
     // "uuuu" (proleptic year), not "yyyy" (year-of-era) — STRICT resolution
@@ -100,6 +107,13 @@ public class Lune {
      * executes commands from stdin until "bye" or input runs out.
      */
     public static void main(String[] args) {
+        // Windows consoles often default to a legacy, non-UTF-8 code page,
+        // which mangles characters like the em dash used throughout Lune's
+        // messages into "�" — forcing UTF-8 here fixes that regardless of
+        // the terminal's own code page. The GUI is unaffected either way,
+        // since JavaFX renders text directly with Unicode-aware fonts.
+        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
+
         String banner = " _                     \n"
                 + "| |   _   _ _ __   ___ \n"
                 + "| |  | | | | '_ \\ / _ \\\n"
@@ -199,6 +213,9 @@ public class Lune {
             case FIND:
                 return handleFind(input, tasks);
             case ARCHIVE:
+                if (!input.equals("archive")) {
+                    throw new LuneException("Ugh, archive doesn't take any extra words... just try: archive");
+                }
                 return archiveTasks(tasks);
             case UNKNOWN:
                 // Fallthrough
@@ -471,7 +488,7 @@ public class Lune {
             }
             tasks.clear();
         }
-        return "     Archived " + archivedCount + " task(s) to " + ARCHIVE_FILE + ".\n"
+        return "     Archived " + archivedCount + " task(s) to " + ARCHIVE_FILE_DISPLAY + ".\n"
                 + "     Ah, a blank slate. Delightful.\n";
     }
 
